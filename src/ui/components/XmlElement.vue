@@ -1,5 +1,5 @@
 <template lang="pug">
-  .node
+  .xml-element
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
         | {{ indent }}
@@ -160,7 +160,7 @@ export default XmlElement;
 </script>
 
 <style lang="stylus" scoped>
-.node
+.xml-element
   position relative
   display block
   font-family Consolas, monospace

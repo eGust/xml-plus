@@ -44,13 +44,16 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
-#app
+<style lang="stylus">
+body
+  margin 0
+  padding 0
   font-family 'Avenir', Helvetica, Arial, sans-serif
   background-color cornsilk
+#app
   display block
   position relative
-  height 100vh
+  min-height 100vh
 .title
   padding 6px 12px
 .xml-root
