@@ -1,9 +1,5 @@
-import Vue from 'vue';
 import qs from 'query-string';
-import App from './content/App.vue';
-import createStore from './content/store';
-
-Vue.config.productionTip = false;
+import startApp from './ui';
 
 const DEFAULT_XML = '/xml/default.xml';
 
@@ -23,9 +19,5 @@ async function fetchXml(path) {
 
 (async () => {
   const params = qs.parse(window.location.search);
-  const store = createStore(await fetchXml(params.xml));
-  new Vue({
-    store,
-    render: h => h(App),
-  }).$mount('#app');
+  startApp(await fetchXml(params.xml));
 })();

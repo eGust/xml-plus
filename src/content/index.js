@@ -1,8 +1,4 @@
-import Vue from 'vue';
-import App from './App.vue';
-import createStore from './store';
-
-Vue.config.productionTip = false;
+import startApp from '../ui';
 
 const BODY = '<body><div id="app"></div></body>';
 
@@ -37,10 +33,6 @@ chrome.runtime.sendMessage('QUERY_XML', (xmlType) => {
 
   if (!xml) return;
 
-  const store = createStore(xml);
   document.documentElement.innerHTML = BODY;
-  new Vue({
-    store,
-    render: h => h(App),
-  }).$mount('#app');
+  startApp(xml);
 });
