@@ -4,9 +4,9 @@ import cheerio from 'cheerio';
 
 Vue.use(Vuex);
 
-const createStore = ({ raw, root }) => {
+const createStore = ({ raw, doc }) => {
   const xml = {
-    root,
+    doc,
     $: cheerio.load(raw, { xmlMode: true }),
   };
 

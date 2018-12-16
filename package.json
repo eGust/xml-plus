@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "run-p watch xml",
-    "watch": "vue-cli-service build --mode development --watch",
-    "xml": "hs samples -c-1 --cors",
+    "dev": "vue-cli-service serve",
+    "ext": "vue-cli-service build --mode development --watch",
     "build": "vue-cli-service build"
   },
   "dependencies": {
     "cheerio": "^1.0.0-rc.2",
+    "query-string": "^6.2.0",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"
   },
@@ -20,8 +20,6 @@
     "babel-eslint": "^10.0.1",
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
-    "http-server": "^0.11.1",
-    "npm-run-all": "^4.1.5",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
     "stylus": "^0.54.5",
