@@ -1,12 +1,14 @@
 import Vue from 'vue';
 import App from './App';
-import createStore from './store';
 
 Vue.config.productionTip = false;
 
-const startApp = (xml) => {
+const startApp = async (xml, { isDev = false } = {}) => {
+  Vue.prototype.$xml = xml;
+  Vue.prototype.$isDev = isDev;
+  Vue.prototype.$settings = { indent: '    ' };
+
   new Vue({
-    store: createStore(xml),
     render: h => h(App),
   }).$mount('#app');
 };

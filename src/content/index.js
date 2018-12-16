@@ -1,11 +1,13 @@
 import startApp from '../ui';
 
-const BODY = '<body><div id="app"></div></body>';
+const BODY = '<body><link href="chrome-extension://goandkhgmddfafhkmjebmicpjliohkco/css/content.css" rel="stylesheet" /><div id="app"></div></body>';
 
 function retrieveXml(xmlType) {
   try {
     if (xmlType === 'XML') {
       const doc = document.getElementById('webkit-xml-viewer-source-xml');
+      doc.parentNode.removeChild(doc);
+
       return {
         doc,
         raw: doc.innerHTML,
@@ -25,14 +27,25 @@ function retrieveXml(xmlType) {
   }
 }
 
-chrome.runtime.sendMessage('QUERY_XML', (xmlType) => {
-  if (!xmlType) return;
+function init() {
+  chrome.runtime.sendMessage('QUERY_XML', async (xmlType) => {
+    if (!xmlType) return;
 
-  const xml = retrieveXml(xmlType);
-  console.log({ xmlType, xml });
+    const xml = retrieveXml(xmlType);
+    if (!xml) return;
 
-  if (!xml) return;
+    console.log({ xmlType, xml });
+    document.body.outerHTML = BODY;
+    const t = setTimeout(() => {
+      clearTimeout(t);
+      startApp(xml);
+    }, 20);
+  });
+}
 
-  document.documentElement.innerHTML = BODY;
-  startApp(xml);
-});
+function onLoad() {
+  console.log('onload');
+  init();
+}
+
+document.addEventListener('readystatechange', onLoad);

@@ -23,7 +23,7 @@ module.exports = {
   productionSourceMap: isNotProd,
   pages,
   css: {
-    extract: false,
+    extract: true,
   },
   configureWebpack: {
     output: {
@@ -34,6 +34,7 @@ module.exports = {
   chainWebpack: (config) => {
     if (isNotProd) return;
 
+    config.optimization.delete('splitChunks');
     // don't copy `public/xml` folder which is just for testing
     config
       .plugin('copy')

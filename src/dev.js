@@ -1,4 +1,6 @@
 import qs from 'query-string';
+import cheerio from 'cheerio';
+
 import startApp from './ui';
 
 const DEFAULT_XML = '/xml/default.xml';
@@ -19,5 +21,8 @@ async function fetchXml(path) {
 
 (async () => {
   const params = qs.parse(window.location.search);
-  startApp(await fetchXml(params.xml));
+  const xml = await fetchXml(params.xml);
+  const $ = cheerio.load(xml.raw);
+  window.x = { $, n: xml.doc.children[0], ...xml };
+  startApp(xml, { isDev: true });
 })();

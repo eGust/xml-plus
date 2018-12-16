@@ -3,11 +3,19 @@
   <person>
     <name first="george" last="bush" />
     <address street="1600 pennsylvania avenue" city="washington" country="usa"/>
-    <phoneNumber>202-456-1111</phoneNumber>
+    <phoneNumber type="land">202-456-1111</phoneNumber>
   </person>
   <person>
     <name first="tony" last="blair" />
     <address street="10 downing street" city="london" country="uk"/>
-    <phoneNumber>020 7925 0918</phoneNumber>
+    <phoneNumber type="mobile">020 7925 0918</phoneNumber>
   </person>
+  <test>
+//<![CDATA[
+document.write("<");
+//]]>
+  </test>
+  <test>
+    <DISPLAY_NAME Attribute="Y"><![CDATA[PFTEST0__COUNTER_6__:4:199:, PFTEST0__COUNTER_7__:4:199:]]></DISPLAY_NAME>
+  </test>
 </people>

@@ -26,7 +26,8 @@ chrome.webRequest.onHeadersReceived.addListener(
   ['blocking', 'responseHeaders'],
 );
 
-chrome.runtime.onMessage.addListener((_message, { url }, sendResponse) => {
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  const { url } = sender;
   const contentType = urlTypes[url];
   if (!contentType) {
     sendResponse(url.toLowerCase().endsWith('.xml') && 'XML');

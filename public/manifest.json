@@ -18,7 +18,11 @@
   ],
   "permissions": [
     "<all_urls>",
+    "tabs",
     "webRequest",
     "webRequestBlocking"
+  ],
+  "web_accessible_resources": [
+    "css/content.css"
   ]
 }
