@@ -1,6 +1,6 @@
 import startApp from '../ui';
 
-const BODY = '<body><link href="chrome-extension://goandkhgmddfafhkmjebmicpjliohkco/css/content.css" rel="stylesheet" /><div id="app"></div></body>';
+const NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
 function retrieveXml(xmlType) {
   try {
@@ -35,11 +35,16 @@ function init() {
     if (!xml) return;
 
     console.log({ xmlType, xml });
-    document.body.outerHTML = BODY;
-    const t = setTimeout(() => {
-      clearTimeout(t);
-      startApp(xml);
-    }, 20);
+
+    const cssUrl = chrome.runtime.getURL('css/content.css');
+    document.head.innerHTML = `<link rel="stylesheet" href="${cssUrl}" />`;
+    const body = '<div id="app"></div>';
+
+    document.body.innerHTML = body;
+    // must replace `document.createElement` so Vue can create Elements with styles
+    const createElement = (tag, opts) => document.createElementNS(NAMESPACE, tag, opts);
+    document.createElement = createElement.bind(document);
+    startApp(xml);
   });
 }
 
