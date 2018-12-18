@@ -53,7 +53,6 @@ body
 #app
   display block
   position relative
-  min-height 100vh
 .title
   padding 6px 12px
 .xml-root

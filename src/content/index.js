@@ -42,8 +42,7 @@ function init() {
 
     document.body.innerHTML = body;
     // must replace `document.createElement` so Vue can create Elements with styles
-    const createElement = (tag, opts) => document.createElementNS(NAMESPACE, tag, opts);
-    document.createElement = createElement.bind(document);
+    document.createElement = (tag, opts) => document.createElementNS(NAMESPACE, tag, opts);
     startApp(xml);
   });
 }

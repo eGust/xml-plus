@@ -2,11 +2,9 @@
   .xml-element
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
-        | {{ indent }}
-        .toggle.unselectable(@click="onToggleOpen" ref="toggle") {{ isOpen ? '⏷' : '⏵' }}
+        .toggle.unselectable(@click="onToggleOpen" ref="toggle" :class="toggleClass")
         | <
       template(v-else)
-        | {{ indent }}
         .dash.unselectable {{ '- ' }}
         | <
       .tag-name(@click="onToggleOpen") {{ tagName }}
@@ -35,44 +33,34 @@
           :element="e.element"
           :path="e.path"
           :key="e.path"
-          :level="childLevel"
         )
-      .text(v-else-if="hasText") {{ text }}
+      .children(v-else-if="hasText") {{ text }}
       .close(v-if="isTogglable")
-        | {{ indent }}
         .unselectable {{ ' ' }}
         | </
         .tag-name {{ tagName }}
         | >
-    .guide-line(:style="guideLineStyles")
+    .guide-line
 </template>
 
 <script>
 const KEY_NAME = '__::_key_';
-
 const DO_NOTHING = () => {};
-
-console.log('load XmlElement');
 
 const XmlElement = {
   name: 'xml-element',
-  props: ['element', 'path', 'level'],
+  props: ['element', 'path'],
 
   data: () => ({
     isOpen: true,
-    guideLineStyles: { display: 'none', left: 0 },
   }),
-
-  mounted() {
-    this.updateGuideLineStyles();
-  },
 
   computed: {
     hasChildren() {
       return this.element.childElementCount > 0;
     },
     hasText() {
-      return this.text.trim().length > 0;
+      return this.text.length > 0;
     },
     hasAttributes() {
       return this.attributes.length > 0;
@@ -88,14 +76,9 @@ const XmlElement = {
     isTogglable() {
       return this.hasChildren || this.hasText;
     },
-    childLevel() {
-      return (this.level | 0) + 1;
-    },
 
-    indent() {
-      const indents = new Array(this.level | 0);
-      indents.fill(this.$settings.indent);
-      return indents.join('');
+    toggleClass() {
+      return this.isOpen ? 'open-graph' : 'closed-graph';
     },
 
     tagName() {
@@ -111,9 +94,7 @@ const XmlElement = {
       return attrs;
     },
     text() {
-      const indent = `${this.indent}${this.$settings.indent}`;
-      const lines = this.element.innerHTML.trim().split('\n');
-      return lines.map(ln => `${indent}${ln}`).join('\n');
+      return this.element.innerHTML.trim();
     },
 
     onToggleOpen() {
@@ -125,33 +106,6 @@ const XmlElement = {
     toggleOpen() {
       this.isOpen = !this.isOpen;
     },
-
-    updateGuideLineStyles() {
-      const t = setTimeout(() => {
-        clearTimeout(t);
-        const { toggle } = this.$refs;
-        if (!toggle) {
-          this.$nextTick(() => {
-            this.guideLineStyles = {
-              display: 'none',
-              left: 0,
-            };
-          });
-
-          this.updateGuideLineStyles();
-          return;
-        }
-
-        const { offsetLeft, offsetWidth } = toggle;
-        const left = (offsetLeft + offsetWidth / 2) | 0;
-        this.$nextTick(() => {
-          this.guideLineStyles = {
-            display: 'block',
-            left: `${left - 1}px`,
-          };
-        });
-      }, 33);
-    },
   },
 };
 
@@ -159,7 +113,7 @@ XmlElement.components = { XmlElement };
 export default XmlElement;
 </script>
 
-<style lang="stylus" scoped>
+<style lang="stylus">
 .xml-element
   position relative
   display block
@@ -168,6 +122,7 @@ export default XmlElement;
 .attribute
   display inline
 .open, .close
+  position relative
   *
     display inline
   .tag-name
@@ -182,16 +137,42 @@ export default XmlElement;
   .value
     color maroon
 .toggle
+  display inline-block
+  position relative
   color deepskyblue
+  width 18px
+  vertical-align top
+  &:before
+    content ''
+    position absolute
+    width 0
+    height 0
 .dash
   color gray
 .unselectable
   user-select: none;
 .guide-line
   position absolute
-  top 1.3rem
+  top 1.1rem
+  left 5px
   bottom 0.8rem
   width 1px
   background-color transparent
   border-left 0.6px dashed lightskyblue
+
+.children
+  padding-left 36px
+  position relative
+
+.open-graph:before
+  border-left 6px solid transparent
+  border-right 6px solid transparent
+  border-top 6px solid
+  top calc(0.5rem - 2px)
+.closed-graph:before
+  border-left 6px solid
+  border-top 6px solid transparent
+  border-bottom 6px solid transparent
+  top calc(0.5rem - 6px)
+  left calc(0.5rem - 4px)
 </style>
