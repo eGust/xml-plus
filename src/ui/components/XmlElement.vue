@@ -1,5 +1,5 @@
 <template lang="pug">
-  .xml-element
+  .xml-element(v-show="show")
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
         .toggle.unselectable(@click="onToggleOpen" :class="toggleClass")  &nbsp;
@@ -8,7 +8,7 @@
         .dash.unselectable -&nbsp;
         | <
       .tag-name(@click="onToggleOpen") {{ tagName }}
-      template(v-if="isOpen")
+      template(v-if="open")
         .attribute(v-for="attr in attributes")
           | &nbsp;
           .name {{ attr.name }}
@@ -18,93 +18,42 @@
       template(v-else-if="hasAttributes")
         |  ...
       | {{ isTogglable ? '>' : ' />' }}
-      template(v-if="!isOpen")
-        .elements(v-if="hasChildren")  [{{ childElements.length }} elements...]
+      template(v-if="!open")
+        .elements(v-if="childrenCount > 0")  [{{ childrenCount }} elements...]
         .text(v-else)  ...
         .unselectable {{ ' ' }}
         | </
         .tag-name {{ tagName }}
         | >
 
-    template(v-if="isOpen")
-      .children(v-if="hasChildren")
-        XmlElement(
-          v-for="e in childElements"
-          :element="e.element"
-          :path="e.path"
-          :key="e.path"
-        )
-      .children(v-else-if="hasText") {{ text }}
-      .close(v-if="isTogglable")
-        .unselectable  &nbsp;
-        | </
-        .tag-name {{ tagName }}
-        | >
-    .guide-line(v-show="isOpen && isTogglable")
+    .children-wrap(v-show="open")
+      slot
+    .guide-line(v-show="open && isTogglable")
 </template>
 
 <script>
-const KEY_NAME = '__::_key_';
 const DO_NOTHING = () => {};
 
 const XmlElement = {
-  name: 'xml-element',
-  props: ['element', 'path'],
+  name: 'XmlElement',
+  props: ['tagName', 'attributes', 'childrenCount', 'isTogglable', 'open', 'show', 'highlight'],
 
   data: () => ({
-    isOpen: true,
   }),
 
   computed: {
-    hasChildren() {
-      return this.element.childElementCount > 0;
-    },
-    hasText() {
-      return this.text.length > 0;
-    },
     hasAttributes() {
       return this.attributes.length > 0;
     },
-    childElements() {
-      const { path: p, element: el } = this;
-      const parent = `${p}>${el.tagName}`;
-      return Array.from(el.children).map((element, index) => ({
-        element,
-        path: `${parent}.${index}`,
-      }));
-    },
-    isTogglable() {
-      return this.hasChildren || this.hasText;
-    },
 
     toggleClass() {
-      return this.isOpen ? 'open-graph' : 'closed-graph';
-    },
-
-    tagName() {
-      return this.element.tagName;
-    },
-    attributes() {
-      const { element: el } = this;
-      const attrs = el.getAttributeNames()
-        .map(name => ({ name, value: el.getAttribute(name) }))
-        .filter(({ name }) => name !== KEY_NAME);
-
-      el.setAttribute(KEY_NAME, this.path);
-      return attrs;
-    },
-    text() {
-      return this.element.innerHTML.trim();
-    },
-
-    onToggleOpen() {
-      return this.isTogglable ? this.toggleOpen : DO_NOTHING;
+      return this.open ? 'open-graph' : 'closed-graph';
     },
   },
 
   methods: {
-    toggleOpen() {
-      this.isOpen = !this.isOpen;
+    onToggleOpen() {
+      return this.isTogglable ? this.$emit('toggle') : DO_NOTHING;
     },
   },
 };
@@ -152,10 +101,6 @@ export default XmlElement;
   color lightyellow
 .unselectable
   user-select: none;
-
-.children
-  padding-left 2.2em
-  position relative
 
 .open-graph:before
   border-left 6px solid transparent

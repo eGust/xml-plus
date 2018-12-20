@@ -4,18 +4,17 @@
       .title {{ url }}
     hr
     .xml-root
-      XmlElement(:element="rootElement" :path="rootPath" :key="rootPath")
-    p
-      br
+      ElementTree(:element="rootElement" :path="rootPath" :key="rootPath")
+    SearchPanel
 </template>
 
 <script>
-import { XmlElement } from './components';
+import { ElementTree, SearchPanel } from './components';
 
 export default {
   name: 'app',
 
-  components: { XmlElement },
+  components: { ElementTree, SearchPanel },
 
   data: () => ({
     url: window.location.href,
@@ -27,7 +26,7 @@ export default {
     },
     rootPath() {
       const el = this.rootElement;
-      return el ? `XML.${el.tagName}` : 'XML';
+      return el ? el.tagName : 'XML';
     },
   },
 };
