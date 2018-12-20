@@ -2,10 +2,10 @@
   .xml-element
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
-        .toggle.unselectable(@click="onToggleOpen" ref="toggle" :class="toggleClass")
+        .toggle.unselectable(@click="onToggleOpen" :class="toggleClass")  &nbsp;
         | <
       template(v-else)
-        .dash.unselectable {{ '- ' }}
+        .dash.unselectable -&nbsp;
         | <
       .tag-name(@click="onToggleOpen") {{ tagName }}
       template(v-if="isOpen")
@@ -36,11 +36,11 @@
         )
       .children(v-else-if="hasText") {{ text }}
       .close(v-if="isTogglable")
-        .unselectable {{ ' ' }}
+        .unselectable  &nbsp;
         | </
         .tag-name {{ tagName }}
         | >
-    .guide-line
+    .guide-line(v-show="isOpen && isTogglable")
 </template>
 
 <script>
@@ -118,6 +118,7 @@ export default XmlElement;
   position relative
   display block
   font-family Consolas, monospace
+  font-size 12pt
   white-space pre-wrap
 .attribute
   display inline
@@ -126,21 +127,21 @@ export default XmlElement;
   *
     display inline
   .tag-name
-    color darkgreen
+    color dodgerblue
+    line-height 1.3em
 .clickable
   .tag-name, .toggle
     cursor pointer
 .attribute
-  color blue
+  color orangered
   .name
-    color purple
+    color plum
   .value
-    color maroon
+    color sandybrown
 .toggle
   display inline-block
   position relative
-  color deepskyblue
-  width 18px
+  color gold
   vertical-align top
   &:before
     content ''
@@ -148,31 +149,33 @@ export default XmlElement;
     width 0
     height 0
 .dash
-  color gray
+  color lightyellow
 .unselectable
   user-select: none;
-.guide-line
-  position absolute
-  top 1.1rem
-  left 5px
-  bottom 0.8rem
-  width 1px
-  background-color transparent
-  border-left 0.6px dashed lightskyblue
 
 .children
-  padding-left 36px
+  padding-left 2.2em
   position relative
 
 .open-graph:before
   border-left 6px solid transparent
   border-right 6px solid transparent
   border-top 6px solid
-  top calc(0.5rem - 2px)
+  top calc(0.5em)
 .closed-graph:before
   border-left 6px solid
   border-top 6px solid transparent
   border-bottom 6px solid transparent
-  top calc(0.5rem - 6px)
-  left calc(0.5rem - 4px)
+  top calc(0.5em - 3px)
+  left calc(0.5em - 4px)
+
+.guide-line
+  position absolute
+  top 1.2em
+  left 5px
+  bottom 0.5em
+  width 0.4em
+  background-color transparent
+  border-left 0.6px dashed lemonchiffon
+  border-bottom 0.6px dashed lemonchiffon
 </style>

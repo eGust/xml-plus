@@ -2,36 +2,28 @@ import startApp from '../ui';
 
 const NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
-function retrieveXml(xmlType) {
+function parseXml(xmlType) {
   try {
     if (xmlType === 'XML') {
       const doc = document.getElementById('webkit-xml-viewer-source-xml');
       doc.parentNode.removeChild(doc);
 
-      return {
-        doc,
-        raw: doc.innerHTML,
-      };
+      return doc;
     }
 
     if (xmlType.includes('text/plain')) {
-      const raw = document.querySelector('pre').innerHTML;
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(raw, 'text/xml');
-      return { doc, raw };
+      const raw = document.querySelector('pre').innerText;
+      return (new DOMParser()).parseFromString(raw, 'text/xml');
     }
-
-    return null;
-  } catch (e) {
-    return null;
-  }
+  } catch (e) { console.error(e); }
+  return null;
 }
 
 function init() {
   chrome.runtime.sendMessage('QUERY_XML', async (xmlType) => {
     if (!xmlType) return;
 
-    const xml = retrieveXml(xmlType);
+    const xml = parseXml(xmlType);
     if (!xml) return;
 
     console.log({ xmlType, xml });

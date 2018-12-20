@@ -7,9 +7,6 @@
       XmlElement(:element="rootElement" :path="rootPath" :key="rootPath")
     p
       br
-    template(v-if='isDev')
-      hr
-      pre.raw {{ raw }}
 </template>
 
 <script>
@@ -20,25 +17,17 @@ export default {
 
   components: { XmlElement },
 
-  created() {
-    this.isDev = this.$isDev;
-  },
-
   data: () => ({
     url: window.location.href,
-    isDev: false,
   }),
 
   computed: {
     rootElement() {
-      return this.$xml.doc.children[0];
+      return this.$xml;
     },
     rootPath() {
       const el = this.rootElement;
       return el ? `XML.${el.tagName}` : 'XML';
-    },
-    raw() {
-      return this.$xml.raw;
     },
   },
 };
@@ -49,18 +38,18 @@ body
   margin 0
   padding 0
   font-family 'Avenir', Helvetica, Arial, sans-serif
-  background-color cornsilk
+  color white
+  background-color #222
+  *
+    margin 0
+    padding 0
 #app
   display block
   position relative
 .title
-  padding 6px 12px
+  font-size 14pt
+  margin 0.8em 1em
 .xml-root
   padding 10px 20px
   position relative
-pre.raw
-  display inline-block
-  margin 5px
-  padding 15px
-  background-color white
 </style>

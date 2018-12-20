@@ -1,14 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import cheerio from 'cheerio';
 
 Vue.use(Vuex);
 
-const createStore = ({ raw, doc }) => {
-  const xml = {
-    doc,
-    $: cheerio.load(raw, { xmlMode: true }),
-  };
+const createStore = ({ doc }) => {
+  const xml = { doc };
 
   return new Vuex.Store({
     state: {
