@@ -5,7 +5,7 @@ import createStore from './store';
 Vue.config.productionTip = false;
 
 const startApp = async (xmlDoc, { isDev = false } = {}) => {
-  const root = xmlDoc.documentElement;
+  const root = xmlDoc.children[0];
   Vue.prototype.$xml = root;
   Vue.prototype.$isDev = isDev;
   Vue.prototype.$settings = {};

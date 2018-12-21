@@ -114,13 +114,17 @@ export default XmlElement;
   top calc(0.5em - 3px)
   left calc(0.5em - 4px)
 
-.guide-line
-  position absolute
-  top 1.2em
-  left 5px
-  bottom 0.5em
-  width 0.4em
-  background-color transparent
-  border-left 0.6px dashed lemonchiffon
-  border-bottom 0.6px dashed lemonchiffon
+.xml-element
+  & > .guide-line
+    position absolute
+    top 1.2em
+    left 5px
+    bottom 0.5em
+    width 0.4em
+    background-color transparent
+    border-left 0.6px dashed lemonchiffon
+    border-bottom 0.6px dashed lemonchiffon
+  &:hover > .guide-line
+    border-left 0.6px solid pink
+    border-bottom 0.6px solid pink
 </style>
