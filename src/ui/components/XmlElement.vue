@@ -1,40 +1,42 @@
 <template lang="pug">
-  .xml-element(v-show="show")
+  .xml-element(v-if="show")
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
         .toggle.unselectable(@click="onToggleOpen" :class="toggleClass")  &nbsp;
-        | <
       template(v-else)
         .dash.unselectable -&nbsp;
+      .tag(:class="{ selected: selected }")
         | <
-      .tag-name(@click="onToggleOpen") {{ tagName }}
-      template(v-if="open")
-        .attribute(v-for="attr in attributes")
-          | &nbsp;
-          .name {{ attr.name }}
-          | ="
-          .value {{ attr.value }}
-          | "
-      template(v-else-if="hasAttribute")
-        |  ...
-      | {{ hasInlineText || isTogglable ? '>' : ' />' }}
+        .tag-name(@click="onToggleOpen" @dblclick="onSelected") {{ tagName }}
+        template(v-if="open")
+          .attribute(v-for="attr in attributes")
+            | &nbsp;
+            .name {{ attr.name }}
+            | ="
+            .value {{ attr.value }}
+            | "
+        template(v-else-if="hasAttribute")
+          |  ...
+        | {{ hasInlineText || isTogglable ? '>' : ' />' }}
 
-      template(v-if="hasInlineText")
-        .inline-text.text-child {{ text }}
+    template(v-if="hasInlineText")
+      .inline-text.text-child {{ text }}
+      .close.tag(:class="{selected: selected}")
         | </
-        .tag-name {{ tagName }}
+        .tag-name(@dblclick="onSelected") {{ tagName }}
         | >
 
-      template(v-else-if="open")
-        .info.dark(v-if="hasChild")
-          |  - {{ childCount }} children, {{ leafCount }} leafs
-      template(v-else)
-        .info.light-dark.elements(v-if="hasChild")
-          |  [{{ childCount }} children, {{ leafCount }} leafs...]&nbsp;
-        .info.shorten-text(v-else)
-          | {{ shortenText }}...
+    template(v-else-if="open")
+      .info.dark(v-if="hasChild")
+        |  - {{ childCount }} children, {{ leafCount }} leafs
+    template(v-else)
+      .info.light-dark.elements(v-if="hasChild")
+        |  [{{ childCount }} children, {{ leafCount }} leafs...]&nbsp;
+      .info.shorten-text(v-else)
+        | {{ shortenText }}...
+      .close.tag(:class="{selected: selected}")
         | </
-        .tag-name {{ tagName }}
+        .tag-name(@dblclick="onSelected") {{ tagName }}
         | >
 
     .children-wrap(v-if="open && isTogglable")
@@ -43,15 +45,14 @@
       .children.text-child(v-else-if="hasIndividualText") {{ text }}
     .close(v-if="open && isTogglable")
       .unselectable  &nbsp;
-      | </
-      .tag-name {{ tagName }}
-      | >
+      .tag(:class="{selected: selected}")
+        | </
+        .tag-name(@dblclick="onSelected") {{ tagName }}
+        | >
     .guide-line(v-show="open && isTogglable")
 </template>
 
 <script>
-const DO_NOTHING = () => {};
-
 const isInlineable = text => text.length <= 20 && !text.includes('\n');
 
 const XmlElement = {
@@ -60,6 +61,7 @@ const XmlElement = {
     'tagName',
     'attributes',
     'childCount',
+    'selected',
     'open',
     'show',
     'highlight',
@@ -83,12 +85,17 @@ const XmlElement = {
     hasIndividualText() {
       return this.text ? !isInlineable(this.text) : false;
     },
+
     isTogglable() {
       return this.hasChild || this.hasIndividualText;
     },
 
     toggleClass() {
-      return this.open ? 'open-graph' : 'closed-graph';
+      return {
+        selected: this.selected,
+        'open-graph': this.open,
+        'closed-graph': !this.open,
+      };
     },
     shortenText() {
       return this.hasIndividualText ? this.text.split('\n')[0].substr(0, 15) : '';
@@ -97,7 +104,10 @@ const XmlElement = {
 
   methods: {
     onToggleOpen() {
-      return this.isTogglable ? this.$emit('toggle') : DO_NOTHING;
+      if (this.isTogglable) this.$emit('toggle');
+    },
+    onSelected() {
+      this.$emit('select');
     },
   },
 };
@@ -107,22 +117,23 @@ export default XmlElement;
 </script>
 
 <style lang="stylus">
+.tag-name
+  color dodgerblue
+  line-height 1.3em
 .xml-element
   position relative
   display block
   font-family Consolas, monospace
   font-size 12pt
   white-space pre-wrap
+
 .attribute
   display inline
-.open, .close
-  position relative
+.open, .close, .tag
+  display inline
   *
     display inline
-  .tag-name
-    color dodgerblue
-    line-height 1.3em
-.clickable
+.open.clickable
   .tag-name, .toggle
     cursor pointer
 .attribute
@@ -177,6 +188,12 @@ export default XmlElement;
 .shorten-text
   padding 0 6px
   color lightyellow
+.selected.tag
+  background black
+  border-radius 3px
+  color seagreen
+  .tag-name
+    color lime
 
 .xml-element
   & > .guide-line

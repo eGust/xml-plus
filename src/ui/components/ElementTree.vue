@@ -1,5 +1,5 @@
 <template lang="pug">
-  XmlElement(
+  xml-element(
     :tag-name="element.tagName"
     :attributes="attributes"
     :child-count="childCount"
@@ -8,10 +8,12 @@
     :highlight="status.highlight"
     :leaf-count="status.leafCount"
     :text="text"
+    :selected="path == selected"
     @toggle="onToggle"
+    @select="onSelect"
   )
     .children.child-elements(v-if="childCount > 0")
-      ElementTree(
+      element-tree(
         v-for="item in childElements"
         :element="item.element"
         :key="item.key"
@@ -31,7 +33,7 @@ const ElementTree = {
   props: ['element'],
 
   computed: {
-    ...mapState(['elements']),
+    ...mapState(['elements', 'selected']),
 
     path() {
       return this.element.getAttribute(KEY_NAME);
@@ -74,6 +76,15 @@ const ElementTree = {
         payload: {
           path: this.path,
           open: !this.status.open,
+        },
+      });
+    },
+
+    onSelect() {
+      this.asyncUpdate({
+        name: 'selectElement',
+        payload: {
+          path: this.selected === this.path ? null : this.path,
         },
       });
     },

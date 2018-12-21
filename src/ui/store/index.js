@@ -5,17 +5,26 @@ import { KEY_NAME } from '../components/ElementTree';
 
 Vue.use(Vuex);
 
+function linesLessThan(str, count) {
+  let total = 0;
+  // performance consideration
+  for (const c of str) { // eslint-disable-line no-restricted-syntax
+    if (c !== '\n') continue; // eslint-disable-line no-continue
+
+    total += 1;
+    if (total >= count) return false;
+  }
+  return true;
+}
+
 function decideOpen(level, count, element) {
   if (count === 1) return true;
-  if (!count) {
-    const text = element.innerHTML.trim();
-    return Array.from(text).filter(c => c === '\n').length < 10;
-  }
+  if (!count) return linesLessThan(element.innerHTML.trim(), 10);
 
-  if (level <= 1) return count < 50;
-  if (level <= 3) return count < 25;
+  if (level <= 1) return count < 32;
+  if (level <= 3) return count < 20;
   if (level <= 5) return count <= 6;
-  if (level <= 8) return count <= 3;
+  if (level <= 7) return count <= 3;
   return false;
 }
 
@@ -65,6 +74,7 @@ function generateState(xml) {
 
   return {
     elements,
+    selected: null,
   };
 }
 
@@ -74,6 +84,9 @@ const createStore = xml => new Vuex.Store({
     updateElementStatus: (state, { path, ...value }) => {
       const { elements } = state;
       elements[path] = { ...elements[path], ...value };
+    },
+    selectElement: (state, { path }) => {
+      state.selected = path;
     },
   },
   actions: {

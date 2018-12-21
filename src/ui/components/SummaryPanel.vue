@@ -1,15 +1,15 @@
 <template lang="pug">
-  .search-panel
+  .summary-panel
 </template>
 
 <script>
 export default {
-  name: 'SearchPanel',
+  name: 'SummaryPanel',
 };
 </script>
 
 <style lang="stylus" scoped>
-.search-panel
-  height 200px
-  background-color white
+.summary-panel
+  width 300px
+  background-color black
 </style>
