@@ -2,25 +2,20 @@
   XmlElement(
     :tag-name="element.tagName"
     :attributes="attributes"
-    :children-count="childrenCount"
-    :is-togglable="hasChildren || hasText"
+    :child-count="childCount"
     :open="status.open"
     :show="status.show"
     :highlight="status.highlight"
+    :leaf-count="status.leafCount"
+    :text="text"
     @toggle="onToggle"
   )
-    .children.child-elements(v-if="hasChildren")
+    .children.child-elements(v-if="childCount > 0")
       ElementTree(
         v-for="item in childElements"
         :element="item.element"
         :key="item.key"
       )
-    .children.text-child(v-else-if="hasText") {{ text }}
-    .close(v-if="hasChildren || hasText")
-      .unselectable  &nbsp;
-      | </
-      .tag-name {{ element.tagName }}
-      | >
 </template>
 
 <script>
@@ -54,7 +49,7 @@ const ElementTree = {
     },
 
     text() {
-      return this.element.innerHTML.trim();
+      return this.element.childElementCount === 0 ? this.element.innerHTML.trim() : null;
     },
 
     childElements() {
@@ -65,14 +60,8 @@ const ElementTree = {
       }));
     },
 
-    childrenCount() {
-      return this.element.childElementCount > 0;
-    },
-    hasChildren() {
-      return this.childrenCount > 0;
-    },
-    hasText() {
-      return this.text.length > 0;
+    childCount() {
+      return this.element.childElementCount;
     },
   },
 
@@ -100,6 +89,4 @@ export default ElementTree;
 .children
   padding-left 2.2em
   position relative
-.text-child
-  color beige
 </style>

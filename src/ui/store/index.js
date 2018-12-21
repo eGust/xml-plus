@@ -5,33 +5,71 @@ import { KEY_NAME } from '../components/ElementTree';
 
 Vue.use(Vuex);
 
-const newState = level => ({
+function decideOpen(level, count, element) {
+  if (count === 1) return true;
+  if (!count) {
+    const text = element.innerHTML.trim();
+    return Array.from(text).filter(c => c === '\n').length < 10;
+  }
+
+  if (level <= 1) return count < 50;
+  if (level <= 3) return count < 25;
+  if (level <= 5) return count <= 6;
+  if (level <= 8) return count <= 3;
+  return false;
+}
+
+const newState = (level, childElementCount, element) => ({
   level,
-  open: level < 5,
+  open: decideOpen(level, childElementCount, element),
   show: true,
   highlight: false,
+  isLeaf: childElementCount === 0,
 });
 
 const mergeTo = (state, { element: el, path: parent, level: lvl }) => {
-  Object.assign(state, { [parent]: newState(lvl) });
+  const elementState = newState(lvl, el.childElementCount, el);
+  Object.assign(state, { [parent]: elementState });
+
   const level = lvl + 1;
   el.setAttribute(KEY_NAME, parent);
-  Array.from(el.children).forEach((element, index) => {
+  const children = Array.from(el.children).map((element, index) => {
     const path = `${parent}:${index}/${element.tagName}`;
-    mergeTo(state, { element, path, level });
+    return mergeTo(state, { element, path, level });
   });
+
+  elementState.leafCount = children
+    .map(({ isLeaf, leafCount }) => (isLeaf ? 1 : leafCount))
+    .reduce((sum, count) => sum + count, 0);
+
+  return elementState;
 };
 
-function createStateFromXml(element) {
+function createElementsFromXml(element) {
   const state = {};
   mergeTo(state, { element, path: element.tagName, level: 0 });
   return state;
 }
 
+function generateState(xml) {
+  const elements = createElementsFromXml(xml);
+
+  const levels = {};
+  Object.keys(elements).forEach((k) => {
+    const { level } = elements[k];
+    levels[level] = (levels[level] || 0) + 1;
+  });
+
+  levels[0] = Object.values(levels).reduce((sum, count) => sum + count, 0) - 1;
+  console.log(levels);
+
+  return {
+    elements,
+  };
+}
+
 const createStore = xml => new Vuex.Store({
-  state: {
-    elements: createStateFromXml(xml),
-  },
+  state: generateState(xml),
   mutations: {
     updateElementStatus: (state, { path, ...value }) => {
       const { elements } = state;

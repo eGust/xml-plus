@@ -15,39 +15,83 @@
           | ="
           .value {{ attr.value }}
           | "
-      template(v-else-if="hasAttributes")
+      template(v-else-if="hasAttribute")
         |  ...
-      | {{ isTogglable ? '>' : ' />' }}
-      template(v-if="!open")
-        .elements(v-if="childrenCount > 0")  [{{ childrenCount }} elements...]
-        .text(v-else)  ...
-        .unselectable {{ ' ' }}
+      | {{ hasInlineText || isTogglable ? '>' : ' />' }}
+
+      template(v-if="hasInlineText")
+        .inline-text.text-child {{ text }}
         | </
         .tag-name {{ tagName }}
         | >
 
-    .children-wrap(v-show="open")
-      slot
+      template(v-else-if="open")
+        .info.dark(v-if="hasChild")
+          |  - {{ childCount }} children, {{ leafCount }} leafs
+      template(v-else)
+        .info.light-dark.elements(v-if="hasChild")
+          |  [{{ childCount }} children, {{ leafCount }} leafs...]&nbsp;
+        .info.shorten-text(v-else)
+          | {{ shortenText }}...
+        | </
+        .tag-name {{ tagName }}
+        | >
+
+    .children-wrap(v-if="open && isTogglable")
+      template(v-if="hasChild")
+        slot
+      .children.text-child(v-else-if="hasIndividualText") {{ text }}
+    .close(v-if="open && isTogglable")
+      .unselectable  &nbsp;
+      | </
+      .tag-name {{ tagName }}
+      | >
     .guide-line(v-show="open && isTogglable")
 </template>
 
 <script>
 const DO_NOTHING = () => {};
 
+const isInlineable = text => text.length <= 20 && !text.includes('\n');
+
 const XmlElement = {
   name: 'XmlElement',
-  props: ['tagName', 'attributes', 'childrenCount', 'isTogglable', 'open', 'show', 'highlight'],
+  props: [
+    'tagName',
+    'attributes',
+    'childCount',
+    'open',
+    'show',
+    'highlight',
+    'leafCount',
+    'text',
+  ],
 
   data: () => ({
   }),
 
   computed: {
-    hasAttributes() {
+    hasAttribute() {
       return this.attributes.length > 0;
+    },
+    hasChild() {
+      return this.childCount > 0;
+    },
+    hasInlineText() {
+      return this.text ? isInlineable(this.text) : false;
+    },
+    hasIndividualText() {
+      return this.text ? !isInlineable(this.text) : false;
+    },
+    isTogglable() {
+      return this.hasChild || this.hasIndividualText;
     },
 
     toggleClass() {
       return this.open ? 'open-graph' : 'closed-graph';
+    },
+    shortenText() {
+      return this.hasIndividualText ? this.text.split('\n')[0].substr(0, 15) : '';
     },
   },
 
@@ -87,6 +131,17 @@ export default XmlElement;
     color plum
   .value
     color sandybrown
+.info
+  display inline
+  user-select: none;
+
+.dark
+  color gray
+.light-dark
+  color darkgray
+.lighter-dark
+  color lightgray
+
 .toggle
   display inline-block
   position relative
@@ -113,6 +168,15 @@ export default XmlElement;
   border-bottom 6px solid transparent
   top calc(0.5em - 3px)
   left calc(0.5em - 4px)
+
+.inline-text
+  display inline
+  padding 0 3px
+.text-child
+  color khaki
+.shorten-text
+  padding 0 6px
+  color lightyellow
 
 .xml-element
   & > .guide-line
