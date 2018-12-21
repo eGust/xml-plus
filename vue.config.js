@@ -32,16 +32,33 @@ module.exports = {
     },
   },
   chainWebpack: (config) => {
-    if (isNotProd) return;
-
-    config.optimization.delete('splitChunks');
-    // don't copy `public/xml` folder which is just for testing
     config
       .plugin('copy')
       .tap((args) => {
-        const arg0 = args[0][0];
-        arg0.ignore.push('xml/**');
+        const [params] = args;
+        params.push({
+          from: 'extension',
+          toType: 'dir',
+        });
         return args;
       });
+
+    if (isNotProd) {
+      config
+        .plugin('copy')
+        .tap((args) => {
+          const [params] = args;
+          params.push({
+            from: 'tests/xml',
+            to: 'xml',
+            toType: 'dir',
+          });
+          return args;
+        });
+      return;
+    }
+
+    config.optimization.delete('splitChunks');
+    // don't copy `public/xml` folder which is just for testing
   },
 };
