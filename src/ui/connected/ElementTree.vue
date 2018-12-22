@@ -23,9 +23,7 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import XmlElement from './XmlElement';
-
-export const KEY_NAME = '__::_key_';
+import { XmlElement } from '../components';
 
 const ElementTree = {
   name: 'ElementTree',
@@ -36,7 +34,7 @@ const ElementTree = {
     ...mapState(['elements', 'selected']),
 
     path() {
-      return this.element.getAttribute(KEY_NAME);
+      return this.$xml.e2pMap.get(this.element);
     },
 
     status() {
@@ -45,9 +43,7 @@ const ElementTree = {
 
     attributes() {
       const { element: el } = this;
-      return el.getAttributeNames()
-        .map(name => ({ name, value: el.getAttribute(name) }))
-        .filter(({ name }) => name !== KEY_NAME);
+      return el.getAttributeNames().map(name => ({ name, value: el.getAttribute(name) }));
     },
 
     text() {
@@ -58,7 +54,7 @@ const ElementTree = {
       const { element: el } = this;
       return Array.from(el.children).map(element => ({
         element,
-        key: element.getAttribute(KEY_NAME),
+        key: this.$xml.e2pMap.get(element),
       }));
     },
 

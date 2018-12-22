@@ -1,8 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 
-import { KEY_NAME } from '../components/ElementTree';
-
 Vue.use(Vuex);
 
 function linesLessThan(str, count) {
@@ -36,15 +34,15 @@ const newState = (level, childElementCount, element) => ({
   isLeaf: childElementCount === 0,
 });
 
-const mergeTo = (state, { element: el, path: parent, level: lvl }) => {
+const mergeTo = ({ elements, e2pMap }, { element: el, path: parent, level: lvl }) => {
   const elementState = newState(lvl, el.childElementCount, el);
-  Object.assign(state, { [parent]: elementState });
+  Object.assign(elements, { [parent]: elementState });
 
   const level = lvl + 1;
-  el.setAttribute(KEY_NAME, parent);
+  e2pMap.set(el, parent);
   const children = Array.from(el.children).map((element, index) => {
     const path = `${parent}:${index}/${element.tagName}`;
-    return mergeTo(state, { element, path, level });
+    return mergeTo({ elements, e2pMap }, { element, path, level });
   });
 
   elementState.leafCount = children
@@ -54,14 +52,15 @@ const mergeTo = (state, { element: el, path: parent, level: lvl }) => {
   return elementState;
 };
 
-function createElementsFromXml(element) {
-  const state = {};
-  mergeTo(state, { element, path: element.tagName, level: 0 });
-  return state;
+function createDataFromXml(element) {
+  const elements = {};
+  const e2pMap = new WeakMap();
+  mergeTo({ elements, e2pMap }, { element, path: element.tagName, level: 0 });
+  return { elements, e2pMap };
 }
 
-function generateState(xml) {
-  const elements = createElementsFromXml(xml);
+function generateStateMaps(xml) {
+  const { elements, e2pMap } = createDataFromXml(xml);
 
   const levels = {};
   Object.keys(elements).forEach((k) => {
@@ -73,27 +72,38 @@ function generateState(xml) {
   console.log(levels);
 
   return {
-    elements,
-    selected: null,
+    state: {
+      elements,
+      selected: null,
+    },
+    maps: {
+      e2pMap,
+      p2eMap: new WeakMap(Array.from(e2pMap).reverse()),
+    },
   };
 }
 
-const createStore = xml => new Vuex.Store({
-  state: generateState(xml),
-  mutations: {
-    updateElementStatus: (state, { path, ...value }) => {
-      const { elements } = state;
-      elements[path] = { ...elements[path], ...value };
+const processXmlStore = (xml) => {
+  const root = xml.children[0];
+  const { state, maps } = generateStateMaps(root);
+  const store = new Vuex.Store({
+    state,
+    mutations: {
+      updateElementStatus: (stat, { path, ...value }) => {
+        const { elements } = stat;
+        elements[path] = { ...elements[path], ...value };
+      },
+      selectElement: (stat, { path }) => {
+        stat.selected = path; // eslint-disable-line no-param-reassign
+      },
     },
-    selectElement: (state, { path }) => {
-      state.selected = path;
+    actions: {
+      asyncUpdate: ({ commit }, { name, payload }) => {
+        commit(name, payload);
+      },
     },
-  },
-  actions: {
-    asyncUpdate: ({ commit }, { name, payload }) => {
-      commit(name, payload);
-    },
-  },
-});
+  });
+  return { store, xml: { ...maps, root } };
+};
 
-export default createStore;
+export default processXmlStore;

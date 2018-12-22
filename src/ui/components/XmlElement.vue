@@ -32,7 +32,7 @@
     template(v-else)
       .info.light-dark.elements(v-if="hasChild")
         |  [{{ childCount }} children, {{ leafCount }} leafs...]&nbsp;
-      .info.shorten-text(v-else)
+      .info.shorten-text(v-else :title="text")
         | {{ shortenText }}...
       .close.tag(:class="{selected: selected}")
         | </

@@ -1,3 +1,3 @@
-export { default as ElementTree } from './ElementTree';
-export { default as SearchPanel } from './SearchPanel';
-export { default as SummaryPanel } from './SummaryPanel';
+export { default as XmlElement } from './XmlElement';
+export { default as SearchResultPane } from './SearchResultPane';
+export { default as DetailPane } from './DetailPane';

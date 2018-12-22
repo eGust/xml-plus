@@ -1,32 +1,36 @@
 <template lang="pug">
   #app
-    header
-      .title {{ url }}
-    hr
     main
-      .xml-root
+      header {{ url }}
+      hr
+      section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
-      //- summary-panel
-    footer
-      //- search-panel
+      footer(v-if="selected")
+        detail-panel
+    aside
+      search-panel
 </template>
 
 <script>
-import { ElementTree, SearchPanel, SummaryPanel } from './components';
+import { mapState } from 'vuex';
+import { ElementTree, SearchPanel, DetailPanel } from './connected';
 
 export default {
   name: 'app',
 
-  components: { ElementTree, SearchPanel, SummaryPanel },
+  components: { ElementTree, SearchPanel, DetailPanel },
 
   data: () => ({
     url: window.location.href,
   }),
 
   computed: {
+    ...mapState(['selected']),
+
     rootElement() {
-      return this.$xml;
+      return this.$xml.root;
     },
+
     rootPath() {
       const el = this.rootElement;
       return el ? el.tagName : 'XML';
@@ -36,12 +40,13 @@ export default {
 </script>
 
 <style lang="stylus">
+*
+  box-sizing border-box
 body
   margin 0
   padding 0
   font-family 'Avenir', Helvetica, Arial, sans-serif
   color white
-  background-color #222
   *
     margin 0
     padding 0
@@ -57,22 +62,30 @@ body
   background: #444
   border-radius: 20px
 
+#webkit-xml-viewer-source-xml
+  display none
 #app
   display flex
-  flex-direction column
+  flex-direction row
   position relative
   width 100vw
   height 100vh
-.title
-  font-size 14pt
-  margin 0.8em 1em
 main
+  flex 5
   display flex
-  flex-direction row
-  flex 1
-  & > *
+  flex-direction column
+  max-width 1100px
+  background-color #222
+  header, #xml-root
+    position relative
+    padding 10px 20px
+  #xml-root
+    flex 1
     overflow-y auto
-.xml-root
-  flex 1
-  padding 10px 20px
+  footer
+    height 200px
+aside
+  flex 3
+  min-width 300px
+  position relative
 </style>
