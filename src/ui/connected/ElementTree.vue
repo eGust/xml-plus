@@ -28,6 +28,20 @@ const ElementTree = {
   components: { XmlElement },
   props: ['element'],
 
+  created() {
+    const path = this.$xml.e2pMap.get(this.element);
+    if (this.statuses[path]) return;
+
+    const status = this.$xml.cached.statuses[path];
+    this.asyncUpdate({
+      name: 'setElementStatus',
+      payload: {
+        path,
+        status,
+      },
+    });
+  },
+
   computed: {
     ...mapState(['statuses']),
 
@@ -86,13 +100,13 @@ const ElementTree = {
         name: 'updateCurrentElement',
         payload: {
           subject: 'selected',
-          path: this.selected === this.path ? null : this.path,
+          path: this.status.selected ? null : this.path,
         },
       });
     },
 
     onHoverStart() {
-      if (this.hovering === this.path) return;
+      if (this.status.hovering) return;
 
       this.asyncUpdate({
         name: 'updateCurrentElement',
@@ -103,7 +117,7 @@ const ElementTree = {
       });
     },
     onHoverEnd() {
-      if (this.hovering !== this.path) return;
+      if (!this.status.hovering) return;
 
       this.asyncUpdate({
         name: 'updateCurrentElement',

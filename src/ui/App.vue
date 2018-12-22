@@ -5,7 +5,7 @@
       hr
       section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
-      footer(v-if="selected")
+      footer(v-if="current.selected")
         detail-panel
     aside
       search-panel
@@ -33,7 +33,7 @@ export default {
   }),
 
   computed: {
-    ...mapState(['selected']),
+    ...mapState(['current']),
 
     rootElement() {
       return this.$xml.root;

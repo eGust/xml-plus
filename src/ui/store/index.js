@@ -26,15 +26,18 @@ function decideOpen(level, count, element) {
   return false;
 }
 
-const newState = (level, childElementCount, element) => ({
-  level,
-  isLeaf: childElementCount === 0,
-  open: decideOpen(level, childElementCount, element),
+const DEFAULT_STATUSES = {
   show: true,
   highlight: false,
   selected: false,
   hovering: false,
   childListOffset: 0,
+};
+
+const newState = (level, childElementCount, element) => ({
+  level,
+  isLeaf: childElementCount === 0,
+  open: decideOpen(level, childElementCount, element),
 });
 
 const mergeTo = ({ elements, e2pMap }, { element: el, path: parent, level: lvl }) => {
@@ -86,24 +89,34 @@ function generateStateMaps(xml) {
 const processXmlStore = (xml) => {
   console.time('build store');
   const root = xml.children[0];
-  const { maps, levels, ...stat } = generateStateMaps(root);
+  const { maps, levels, ...cached } = generateStateMaps(root);
   const store = new Vuex.Store({
     state: {
-      ...stat,
-      previous: {
+      statuses: {},
+      current: {
         selected: null,
         hovering: null,
       },
     },
 
     mutations: {
+      setElementStatus: (state, { path, status }) => {
+        const { statuses } = state;
+        if (state[path]) return;
+
+        Vue.set(statuses, path, {
+          ...DEFAULT_STATUSES,
+          ...status,
+        });
+      },
+
       updateElementStatus: (state, { path, ...value }) => {
         const { statuses } = state;
         statuses[path] = { ...statuses[path], ...value };
       },
       updateCurrentElement: (state, { subject, path }) => {
-        const { previous, statuses } = state;
-        const prevPath = previous[subject];
+        const { current, statuses } = state;
+        const prevPath = current[subject];
         if (prevPath) {
           statuses[prevPath][subject] = false;
         }
@@ -111,7 +124,7 @@ const processXmlStore = (xml) => {
         if (path) {
           statuses[path][subject] = true;
         }
-        previous[subject] = path;
+        current[subject] = path;
       },
     },
 
@@ -126,7 +139,7 @@ const processXmlStore = (xml) => {
   return {
     store,
     xml: {
-      ...maps, root, levels,
+      ...maps, root, levels, cached,
     },
   };
 };
