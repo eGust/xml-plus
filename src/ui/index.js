@@ -5,6 +5,7 @@ import processXmlStore from './store';
 Vue.config.productionTip = false;
 
 const startApp = async (xmlDoc, { isDev = false } = {}) => {
+  console.time('init');
   const { store, xml } = processXmlStore(xmlDoc);
   Vue.prototype.$xml = xml;
   Vue.prototype.$isDev = isDev;
@@ -13,13 +14,6 @@ const startApp = async (xmlDoc, { isDev = false } = {}) => {
     store,
     render: h => h(App),
   }).$mount('#app');
-
-  const xmlElement = document.getElementById('webkit-xml-viewer-source-xml');
-  try {
-    xmlElement.appendChild(xml.root);
-  } catch (e) {
-    console.error(e);
-  }
 };
 
 export default startApp;

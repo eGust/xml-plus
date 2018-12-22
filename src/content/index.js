@@ -5,7 +5,8 @@ const NAMESPACE = 'http://www.w3.org/1999/xhtml';
 function initApp(xml) {
   const cssUrl = chrome.runtime.getURL('css/content.css');
   document.head.innerHTML = `<link rel="stylesheet" href="${cssUrl}" />`;
-  const body = '<div id="webkit-xml-viewer-source-xml"></div><div id="app"></div>';
+  const body = `<p id="loading-cloak">Loading...</p>
+<div id="app"></div>`;
 
   document.body.innerHTML = body;
   // must replace `document.createElement` so Vue can create Elements with styles

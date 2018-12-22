@@ -20,6 +20,14 @@ export default {
 
   components: { ElementTree, SearchPanel, DetailPanel },
 
+  mounted() {
+    this.$nextTick(() => {
+      console.timeEnd('init');
+      const loading = document.getElementById('loading-cloak');
+      if (loading) loading.parentNode.removeChild(loading);
+    });
+  },
+
   data: () => ({
     url: window.location.href,
   }),
@@ -46,7 +54,6 @@ body
   margin 0
   padding 0
   font-family 'Avenir', Helvetica, Arial, sans-serif
-  color white
   *
     margin 0
     padding 0
@@ -68,6 +75,7 @@ body
   display flex
   flex-direction row
   position relative
+  color white
   width 100vw
   height 100vh
 main

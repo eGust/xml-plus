@@ -28,10 +28,13 @@ function decideOpen(level, count, element) {
 
 const newState = (level, childElementCount, element) => ({
   level,
+  isLeaf: childElementCount === 0,
   open: decideOpen(level, childElementCount, element),
   show: true,
   highlight: false,
-  isLeaf: childElementCount === 0,
+  selected: false,
+  hovering: false,
+  childListOffset: 0,
 });
 
 const mergeTo = ({ elements, e2pMap }, { element: el, path: parent, level: lvl }) => {
@@ -69,41 +72,63 @@ function generateStateMaps(xml) {
   });
 
   levels[0] = Object.values(levels).reduce((sum, count) => sum + count, 0) - 1;
-  console.log(levels);
 
   return {
-    state: {
-      elements,
-      selected: null,
-    },
+    statuses: elements,
     maps: {
       e2pMap,
       p2eMap: new WeakMap(Array.from(e2pMap).reverse()),
     },
+    levels,
   };
 }
 
 const processXmlStore = (xml) => {
+  console.time('build store');
   const root = xml.children[0];
-  const { state, maps } = generateStateMaps(root);
+  const { maps, levels, ...stat } = generateStateMaps(root);
   const store = new Vuex.Store({
-    state,
-    mutations: {
-      updateElementStatus: (stat, { path, ...value }) => {
-        const { elements } = stat;
-        elements[path] = { ...elements[path], ...value };
-      },
-      selectElement: (stat, { path }) => {
-        stat.selected = path; // eslint-disable-line no-param-reassign
+    state: {
+      ...stat,
+      previous: {
+        selected: null,
+        hovering: null,
       },
     },
+
+    mutations: {
+      updateElementStatus: (state, { path, ...value }) => {
+        const { statuses } = state;
+        statuses[path] = { ...statuses[path], ...value };
+      },
+      updateCurrentElement: (state, { subject, path }) => {
+        const { previous, statuses } = state;
+        const prevPath = previous[subject];
+        if (prevPath) {
+          statuses[prevPath][subject] = false;
+        }
+
+        if (path) {
+          statuses[path][subject] = true;
+        }
+        previous[subject] = path;
+      },
+    },
+
     actions: {
       asyncUpdate: ({ commit }, { name, payload }) => {
         commit(name, payload);
       },
     },
   });
-  return { store, xml: { ...maps, root } };
+  console.timeEnd('build store');
+  console.log(levels);
+  return {
+    store,
+    xml: {
+      ...maps, root, levels,
+    },
+  };
 };
 
 export default processXmlStore;

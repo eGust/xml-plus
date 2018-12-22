@@ -1,14 +1,14 @@
 <template lang="pug">
-  .xml-element(v-if="show")
+  .xml-element(v-show="status.show" @mouseover="onMouseOver" @mouseleave="onMouseLeave")
     .open(:class="{ clickable: isTogglable }")
       template(v-if="isTogglable")
         .toggle.unselectable(@click="onToggleOpen" :class="toggleClass")  &nbsp;
       template(v-else)
         .dash.unselectable -&nbsp;
-      .tag(:class="{ selected: selected }")
+      .tag(:class="{ selected: status.selected }")
         | <
-        .tag-name(@click="onToggleOpen" @dblclick="onSelected") {{ tagName }}
-        template(v-if="open")
+        .tag-name(@click="onSelected") {{ tagName }}
+        template(v-if="status.open")
           .attribute(v-for="attr in attributes")
             | &nbsp;
             .name {{ attr.name }}
@@ -21,35 +21,35 @@
 
     template(v-if="hasInlineText")
       .inline-text.text-child {{ text }}
-      .close.tag(:class="{selected: selected}")
+      .close.tag(:class="{selected: status.selected}")
         | </
-        .tag-name(@dblclick="onSelected") {{ tagName }}
+        .tag-name(@click="onSelected") {{ tagName }}
         | >
 
-    template(v-else-if="open")
+    template(v-else-if="status.open")
       .info.dark(v-if="hasChild")
-        |  - {{ childCount }} children, {{ leafCount }} leafs
+        |  - {{ childCount }} children, {{ status.leafCount }} leafs
     template(v-else)
       .info.light-dark.elements(v-if="hasChild")
-        |  [{{ childCount }} children, {{ leafCount }} leafs...]&nbsp;
+        |  [{{ childCount }} children, {{ status.leafCount }} leafs...]&nbsp;
       .info.shorten-text(v-else :title="text")
         | {{ shortenText }}...
-      .close.tag(:class="{selected: selected}")
+      .close.tag(:class="{selected: status.selected}")
         | </
-        .tag-name(@dblclick="onSelected") {{ tagName }}
+        .tag-name(@click="onSelected") {{ tagName }}
         | >
 
-    .children-wrap(v-if="open && isTogglable")
+    .children-wrap(v-if="available || isOpen" v-show="isOpen")
       template(v-if="hasChild")
         slot
       .children.text-child(v-else-if="hasIndividualText") {{ text }}
-    .close(v-if="open && isTogglable")
+    .close(v-if="isOpen")
       .unselectable  &nbsp;
-      .tag(:class="{selected: selected}")
+      .tag(:class="{selected: status.selected}")
         | </
-        .tag-name(@dblclick="onSelected") {{ tagName }}
+        .tag-name(@click="onSelected") {{ tagName }}
         | >
-    .guide-line(v-show="open && isTogglable")
+    .guide-line(v-show="isOpen", :class="{ hovering: status.hovering }")
 </template>
 
 <script>
@@ -61,16 +61,29 @@ const XmlElement = {
     'tagName',
     'attributes',
     'childCount',
-    'selected',
-    'open',
-    'show',
-    'highlight',
-    'leafCount',
     'text',
+    'status',
   ],
 
   data: () => ({
+    available: false,
   }),
+
+  mounted() {
+    if (!this.isOpen) return;
+
+    this.$nextTick(() => {
+      this.available = this.isOpen;
+    });
+  },
+
+  updated() {
+    if (this.available || !this.isOpen) return;
+
+    this.$nextTick(() => {
+      this.available = true;
+    });
+  },
 
   computed: {
     hasAttribute() {
@@ -88,6 +101,9 @@ const XmlElement = {
 
     isTogglable() {
       return this.hasChild || this.hasIndividualText;
+    },
+    isOpen() {
+      return this.status.open && this.isTogglable;
     },
 
     toggleClass() {
@@ -108,6 +124,20 @@ const XmlElement = {
     },
     onSelected() {
       this.$emit('select');
+    },
+    onMouseOver(e) {
+      if (this.hovering) {
+        e.stopImmediatePropagation();
+        return;
+      }
+
+      if (this.isOpen) {
+        e.stopImmediatePropagation();
+        this.$emit('hoverStart');
+      }
+    },
+    onMouseLeave() {
+      this.$emit('hoverEnd');
     },
   },
 };
@@ -133,9 +163,8 @@ export default XmlElement;
   display inline
   *
     display inline
-.open.clickable
-  .tag-name, .toggle
-    cursor pointer
+.tag-name, .open.clickable .toggle
+  cursor pointer
 .attribute
   color orangered
   .name
@@ -205,7 +234,7 @@ export default XmlElement;
     background-color transparent
     border-left 0.6px dashed lemonchiffon
     border-bottom 0.6px dashed lemonchiffon
-  &:hover > .guide-line
-    border-left 0.6px solid pink
-    border-bottom 0.6px solid pink
+    &.hovering
+      border-left 0.6px solid deeppink
+      border-bottom 0.6px solid deeppink
 </style>

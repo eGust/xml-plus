@@ -3,14 +3,12 @@
     :tag-name="element.tagName"
     :attributes="attributes"
     :child-count="childCount"
-    :open="status.open"
-    :show="status.show"
-    :highlight="status.highlight"
-    :leaf-count="status.leafCount"
     :text="text"
-    :selected="path == selected"
+    :status="status"
     @toggle="onToggle"
     @select="onSelect"
+    @hoverStart="onHoverStart"
+    @hoverEnd="onHoverEnd"
   )
     .children.child-elements(v-if="childCount > 0")
       element-tree(
@@ -31,14 +29,14 @@ const ElementTree = {
   props: ['element'],
 
   computed: {
-    ...mapState(['elements', 'selected']),
+    ...mapState(['statuses']),
 
     path() {
       return this.$xml.e2pMap.get(this.element);
     },
 
     status() {
-      return this.elements[this.path];
+      return this.statuses[this.path];
     },
 
     attributes() {
@@ -51,11 +49,18 @@ const ElementTree = {
     },
 
     childElements() {
-      const { element: el } = this;
-      return Array.from(el.children).map(element => ({
-        element,
-        key: this.$xml.e2pMap.get(element),
-      }));
+      const { element: el, status: { childListOffset } } = this;
+      const listSize = Math.min(this.childCount - childListOffset, 100);
+      const list = new Array(listSize);
+
+      for (let i = 0; i < listSize; i += 1) {
+        const element = el.children[childListOffset + i];
+        list[i] = {
+          element,
+          key: this.$xml.e2pMap.get(element),
+        };
+      }
+      return list;
     },
 
     childCount() {
@@ -78,9 +83,33 @@ const ElementTree = {
 
     onSelect() {
       this.asyncUpdate({
-        name: 'selectElement',
+        name: 'updateCurrentElement',
         payload: {
+          subject: 'selected',
           path: this.selected === this.path ? null : this.path,
+        },
+      });
+    },
+
+    onHoverStart() {
+      if (this.hovering === this.path) return;
+
+      this.asyncUpdate({
+        name: 'updateCurrentElement',
+        payload: {
+          subject: 'hovering',
+          path: this.path,
+        },
+      });
+    },
+    onHoverEnd() {
+      if (this.hovering !== this.path) return;
+
+      this.asyncUpdate({
+        name: 'updateCurrentElement',
+        payload: {
+          subject: 'hovering',
+          path: null,
         },
       });
     },
@@ -94,6 +123,6 @@ export default ElementTree;
 
 <style lang="stylus">
 .children
-  padding-left 2.2em
+  margin-left 2.2em
   position relative
 </style>
