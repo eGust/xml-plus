@@ -23,7 +23,8 @@ module.exports = {
   productionSourceMap: isNotProd,
   pages,
   css: {
-    extract: true,
+    // dev can also hot-reload style changes
+    extract: process.env.npm_lifecycle_event !== 'dev',
   },
   configureWebpack: {
     output: {

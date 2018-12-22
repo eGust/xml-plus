@@ -15,7 +15,11 @@ const startApp = async (xmlDoc, { isDev = false } = {}) => {
   }).$mount('#app');
 
   const xmlElement = document.getElementById('webkit-xml-viewer-source-xml');
-  xmlElement.appendChild(xmlDoc.documentElement);
+  try {
+    xmlElement.appendChild(xml.root);
+  } catch (e) {
+    console.error(e);
+  }
 };
 
 export default startApp;

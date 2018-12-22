@@ -76,12 +76,15 @@ main
   flex-direction column
   max-width 1100px
   background-color #222
-  header, #xml-root
+  & > *
     position relative
-    padding 10px 20px
   #xml-root
     flex 1
+    padding 8px 20px
     overflow-y auto
+  header
+    font-size 14pt
+    padding 12px 20px
   footer
     height 200px
 aside
