@@ -108,9 +108,9 @@ const XmlElement = {
 
     toggleClass() {
       return {
-        selected: this.selected,
-        'open-graph': this.open,
-        'closed-graph': !this.open,
+        selected: this.status.selected,
+        'open-graph': this.status.open,
+        'closed-graph': !this.status.open,
       };
     },
     shortenText() {
@@ -149,7 +149,7 @@ export default XmlElement;
 <style lang="stylus">
 .tag-name
   color dodgerblue
-  line-height 1.3em
+  line-height calc(1em + 6px)
 .xml-element
   position relative
   display block
@@ -163,7 +163,7 @@ export default XmlElement;
   display inline
   *
     display inline
-.tag-name, .open.clickable .toggle
+.toggle
   cursor pointer
 .attribute
   color orangered

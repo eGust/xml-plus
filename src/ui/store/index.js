@@ -31,7 +31,7 @@ const DEFAULT_STATUSES = {
   highlight: false,
   selected: false,
   hovering: false,
-  childListOffset: 0,
+  childListOffset: null,
 };
 
 const newState = (level, childElementCount, element) => ({

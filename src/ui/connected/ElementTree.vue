@@ -11,21 +11,28 @@
     @hoverEnd="onHoverEnd"
   )
     .children.child-elements(v-if="childCount > 0")
-      element-tree(
-        v-for="item in childElements"
-        :element="item.element"
-        :key="item.key"
-      )
+      grouped-list(
+        :total-count="childCount"
+        :group-size="groupSize"
+        :active-index="status.childListOffset"
+        @click="onSwitchList"
+        )
+        element-tree(
+          v-for="item in childElements"
+          :element="item.element"
+          :key="item.key"
+        )
 </template>
 
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import { XmlElement } from '../components';
+import { XmlElement, GroupedList } from '../components';
 
+const GROUP_SIZE = 50;
 const ElementTree = {
   name: 'ElementTree',
-  components: { XmlElement },
+  components: { XmlElement, GroupedList },
   props: ['element'],
 
   created() {
@@ -48,7 +55,6 @@ const ElementTree = {
     path() {
       return this.$xml.e2pMap.get(this.element);
     },
-
     status() {
       return this.statuses[this.path];
     },
@@ -57,14 +63,15 @@ const ElementTree = {
       const { element: el } = this;
       return el.getAttributeNames().map(name => ({ name, value: el.getAttribute(name) }));
     },
-
     text() {
-      return this.element.childElementCount === 0 ? this.element.innerHTML.trim() : null;
+      return this.childCount === 0 ? this.element.innerHTML.trim() : null;
     },
+
+    groupSize: () => GROUP_SIZE,
 
     childElements() {
       const { element: el, status: { childListOffset } } = this;
-      const listSize = Math.min(this.childCount - childListOffset, 100);
+      const listSize = Math.min(this.childCount - childListOffset, GROUP_SIZE);
       const list = new Array(listSize);
 
       for (let i = 0; i < listSize; i += 1) {
@@ -91,6 +98,16 @@ const ElementTree = {
         payload: {
           path: this.path,
           open: !this.status.open,
+        },
+      });
+    },
+
+    onSwitchList(index) {
+      this.asyncUpdate({
+        name: 'updateElementStatus',
+        payload: {
+          path: this.path,
+          childListOffset: this.status.childListOffset === index ? null : index,
         },
       });
     },
@@ -137,6 +154,6 @@ export default ElementTree;
 
 <style lang="stylus">
 .children
-  margin-left 2.2em
+  margin 3px 2.2em
   position relative
 </style>

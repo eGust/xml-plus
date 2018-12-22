@@ -5,10 +5,10 @@
       hr
       section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
-      footer(v-if="current.selected")
-        detail-panel
+      footer
     aside
       search-panel
+      //- detail-panel
 </template>
 
 <script>
@@ -53,7 +53,7 @@ export default {
 body
   margin 0
   padding 0
-  font-family 'Avenir', Helvetica, Arial, sans-serif
+  font-family Helvetica, Arial, sans-serif
   *
     margin 0
     padding 0
@@ -94,7 +94,7 @@ main
     font-size 14pt
     padding 12px 20px
   footer
-    height 200px
+    height 30px
 aside
   flex 3
   min-width 300px
