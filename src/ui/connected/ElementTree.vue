@@ -14,7 +14,7 @@
       grouped-list(
         :total-count="childCount"
         :group-size="groupSize"
-        :active-index="status.childListOffset"
+        :active-index="status.childGroupIndex"
         @click="onSwitchList"
         )
         element-tree(
@@ -70,12 +70,13 @@ const ElementTree = {
     groupSize: () => GROUP_SIZE,
 
     childElements() {
-      const { element: el, status: { childListOffset } } = this;
-      const listSize = Math.min(this.childCount - childListOffset, GROUP_SIZE);
+      const { element: el, status: { childGroupIndex } } = this;
+      const offset = childGroupIndex * GROUP_SIZE;
+      const listSize = Math.min(this.childCount - offset, GROUP_SIZE);
       const list = new Array(listSize);
 
       for (let i = 0; i < listSize; i += 1) {
-        const element = el.children[childListOffset + i];
+        const element = el.children[offset + i];
         list[i] = {
           element,
           key: this.$xml.e2pMap.get(element),
@@ -107,7 +108,7 @@ const ElementTree = {
         name: 'updateElementStatus',
         payload: {
           path: this.path,
-          childListOffset: this.status.childListOffset === index ? null : index,
+          childGroupIndex: this.status.childGroupIndex === index ? null : index,
         },
       });
     },

@@ -31,7 +31,7 @@ const DEFAULT_STATUSES = {
   highlight: false,
   selected: false,
   hovering: false,
-  childListOffset: null,
+  childGroupIndex: null,
 };
 
 const newState = (level, childElementCount, element) => ({
@@ -68,13 +68,11 @@ function createDataFromXml(element) {
 function generateStateMaps(xml) {
   const { elements, e2pMap } = createDataFromXml(xml);
 
-  const levels = {};
+  const levels = [];
   Object.keys(elements).forEach((k) => {
     const { level } = elements[k];
     levels[level] = (levels[level] || 0) + 1;
   });
-
-  levels[0] = Object.values(levels).reduce((sum, count) => sum + count, 0) - 1;
 
   return {
     statuses: elements,

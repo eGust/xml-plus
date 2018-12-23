@@ -228,7 +228,7 @@ export default XmlElement;
   & > .guide-line
     position absolute
     top 1.2em
-    left 5px
+    left 6px
     bottom 0.5em
     width 0.4em
     background-color transparent

@@ -6,6 +6,7 @@
       section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
       footer
+        summary-pane(:levels="levels")
     aside
       search-panel
       //- detail-panel
@@ -13,12 +14,13 @@
 
 <script>
 import { mapState } from 'vuex';
-import { ElementTree, SearchPanel, DetailPanel } from './connected';
+import { ElementTree, SearchPanel } from './connected';
+import { SummaryPane } from './components';
 
 export default {
   name: 'app',
 
-  components: { ElementTree, SearchPanel, DetailPanel },
+  components: { ElementTree, SearchPanel, SummaryPane },
 
   mounted() {
     this.$nextTick(() => {
@@ -42,6 +44,10 @@ export default {
     rootPath() {
       const el = this.rootElement;
       return el ? el.tagName : 'XML';
+    },
+
+    levels() {
+      return this.$xml.levels;
     },
   },
 };

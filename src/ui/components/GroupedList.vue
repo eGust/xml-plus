@@ -6,17 +6,23 @@
       .row(v-for="(range, index) in ranges")
         template(v-if="index == activeIndex")
           .active.pointer-cursor(@click="$emit('click', index)")
+            minus-square-button.svg-button
             .range - {{ range.low }} : {{ range.high }}
           .items
             slot
-            .guide-line
+            .guideline
         .pointer-cursor(v-else @click="$emit('click', index)")
+          add-square-button.svg-button
           .range [{{ range.low }} .. {{ range.high }}]
 </template>
 
 <script>
+import AddSquareButton from '../../assets/add-square-button.svg';
+import MinusSquareButton from '../../assets/minus-square-button.svg';
+
 export default {
   name: 'GroupedList',
+  components: { AddSquareButton, MinusSquareButton },
   props: ['totalCount', 'activeIndex', 'groupSize'],
 
   computed: {
@@ -48,22 +54,27 @@ export default {
   margin 5px 0
 .range
   display inline-block
-  color #CCC
+  color deepskyblue
   user-select none
   vertical-align middle
 .active .range
-    color green
+    color darkseagreen
 .pointer-cursor
   cursor pointer
+.svg-button
+  width 14px
+  height 14px
+  margin-right 8px
+  vertical-align middle
 .items
   padding-left 1.1em
   position relative
-  .guide-line
+  .guideline
     position absolute
     display block
     top 0.3em
     bottom 0.5em
-    left 0.3em
+    left 7px
     width 0.4em
     border-left 1px dotted green
     border-bottom 1px dotted green
