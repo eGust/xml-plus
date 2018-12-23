@@ -1,4 +1,5 @@
 export { default as XmlElement } from './XmlElement';
 export { default as GroupedList } from './GroupedList';
 export { default as SearchResultPane } from './SearchResultPane';
-export { default as SummaryPane } from './SummaryPane';
+export { default as SummaryBar } from './SummaryBar';
+export { default as SearchForm } from './SearchForm';

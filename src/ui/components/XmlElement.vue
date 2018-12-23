@@ -133,11 +133,11 @@ const XmlElement = {
 
       if (this.isOpen) {
         e.stopImmediatePropagation();
-        this.$emit('hoverStart');
+        this.$emit('hover-start');
       }
     },
     onMouseLeave() {
-      this.$emit('hoverEnd');
+      this.$emit('hover-end');
     },
   },
 };
@@ -148,6 +148,7 @@ export default XmlElement;
 
 <style lang="stylus">
 .tag-name
+  cursor default
   color dodgerblue
   line-height calc(1em + 6px)
 .xml-element

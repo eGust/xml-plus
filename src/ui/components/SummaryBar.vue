@@ -1,11 +1,11 @@
 <template lang="pug">
-  #detail-panel
+  #summary-bar
     .summary Total {{ nodeCount }} nodes; Max Depth: {{ maxDepth }}
 </template>
 
 <script>
 export default {
-  name: 'DetailPane',
+  name: 'SummaryBar',
   props: ['levels'],
   computed: {
     maxDepth() {
@@ -20,12 +20,14 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-#detail-panel
+#summary-bar
   background-color #444
   color white
   height 100%
   display flex
   align-items center
+  border-top 1px solid gray
   .summary
     margin-left 12px
+    color deeppink
 </style>

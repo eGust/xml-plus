@@ -8,6 +8,7 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "lodash": "^4.17.11",
     "query-string": "^6.2.0",
     "vue": "^2.5.17",
     "vuex": "^3.0.1"

@@ -47,7 +47,8 @@ const mergeTo = ({ elements, e2pMap }, { element: el, path: parent, level: lvl }
   const level = lvl + 1;
   e2pMap.set(el, parent);
   const children = Array.from(el.children).map((element, index) => {
-    const path = `${parent}:${index}/${element.tagName}`;
+    // const path = `${parent}:${index}/${element.tagName}`;
+    const path = `${parent}/${index}`;
     return mergeTo({ elements, e2pMap }, { element, path, level });
   });
 
@@ -60,8 +61,9 @@ const mergeTo = ({ elements, e2pMap }, { element: el, path: parent, level: lvl }
 
 function createDataFromXml(element) {
   const elements = {};
-  const e2pMap = new WeakMap();
-  mergeTo({ elements, e2pMap }, { element, path: element.tagName, level: 0 });
+  const e2pMap = new Map();
+  // mergeTo({ elements, e2pMap }, { element, path: element.tagName, level: 0 });
+  mergeTo({ elements, e2pMap }, { element, path: '/', level: 0 });
   return { elements, e2pMap };
 }
 
@@ -78,7 +80,7 @@ function generateStateMaps(xml) {
     statuses: elements,
     maps: {
       e2pMap,
-      p2eMap: new WeakMap(Array.from(e2pMap).reverse()),
+      p2eMap: new Map(Array.from(e2pMap).map(e => e.reverse())),
     },
     levels,
   };
@@ -94,6 +96,10 @@ const processXmlStore = (xml) => {
       current: {
         selected: null,
         hovering: null,
+      },
+      search: {
+        selector: '',
+        method: 'CSS',
       },
     },
 
@@ -123,6 +129,11 @@ const processXmlStore = (xml) => {
           statuses[path][subject] = true;
         }
         current[subject] = path;
+      },
+
+      updateSubject: (state, { subject, data }) => {
+        // eslint-disable-next-line no-param-reassign
+        state[subject] = { ...state[subject], ...data };
       },
     },
 

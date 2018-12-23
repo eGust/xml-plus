@@ -6,21 +6,20 @@
       section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
       footer
-        summary-pane(:levels="levels")
+        summary-bar(:levels="levels")
     aside
       search-panel
-      //- detail-panel
 </template>
 
 <script>
 import { mapState } from 'vuex';
 import { ElementTree, SearchPanel } from './connected';
-import { SummaryPane } from './components';
+import { SummaryBar } from './components';
 
 export default {
   name: 'app',
 
-  components: { ElementTree, SearchPanel, SummaryPane },
+  components: { ElementTree, SearchPanel, SummaryBar },
 
   mounted() {
     this.$nextTick(() => {

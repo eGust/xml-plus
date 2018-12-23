@@ -7,8 +7,8 @@
     :status="status"
     @toggle="onToggle"
     @select="onSelect"
-    @hoverStart="onHoverStart"
-    @hoverEnd="onHoverEnd"
+    @hover-start="onHoverStart"
+    @hover-end="onHoverEnd"
   )
     .children.child-elements(v-if="childCount > 0")
       grouped-list(
