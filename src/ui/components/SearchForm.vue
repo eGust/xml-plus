@@ -1,8 +1,12 @@
 <template lang="pug">
   #search-form
-    .switch
-      .option(:class="{active: method == 'CSS'}" @click="changeMethod('CSS')") CSS
-      .option(:class="{active: method == 'XPath'}" @click="changeMethod('XPath')") XPath
+    .row
+      .switch
+        .option(:class="{active: method == 'CSS'}" @click="changeMethod('CSS')") CSS
+        .option(:class="{active: method == 'XPath'}" @click="changeMethod('XPath')") XPath
+      label.warning
+        | Selectors are
+        .bold  CASE-SENSITIVE
     input(
       :value="selector"
       :placeholder="placeholder"
@@ -48,42 +52,57 @@ export default {
 <style lang="stylus" scoped>
 #search-form
   display flex
-  align-items center
-  & > input
+  flex-direction column
+  input
     flex 1
     font-family Consolas, monospace
     font-size 12pt
-    height 28px
+    height 30px
     padding 2px 8px
     color white
     background-color #222
-    border 1px solid pink
+    border 1px solid lightskyblue
     &:focus
       background-color black
-      border-color deeppink
+      border-color white
+      border-width 2px
+
+.row
+  display flex
+  align-items center
+  justify-content space-between
+
+.warning
+  padding 5px
+  font-size 11pt
+  & > *
+    display inline
+  .bold
+    color orangered
+    font-weight bold
+    font-size 105%
+
 .switch
   margin 0 5px
-  border 2px solid red
+  border 2px solid dodgerblue
   border-radius 5px
-  display flex
+  display inline-flex
   align-items center
   overflow hidden
   background-color #222
+  color gray
   .option
     cursor pointer
-    padding 6px 12px
-  &:not(:hover)
-    width 75px
+    width 80px
     text-align center
-    & > .option.active
-      margin 0 auto
-    & > .option:not(.active)
-      display none
-  &:hover
-    .option.active
-      background-color red
-    .option:hover
-      color yellow
+    padding 6px
+  .option.active
+    color white
+    font-weight bold
+    background-color dodgerblue
+  .option:hover
+    color yellow
+
 input, button
   -webkit-appearance none
   outline none

@@ -97,10 +97,6 @@ const processXmlStore = (xml) => {
         selected: null,
         hovering: null,
       },
-      search: {
-        selector: '',
-        method: 'CSS',
-      },
     },
 
     mutations: {
