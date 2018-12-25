@@ -3,6 +3,7 @@
     :params="params"
     :result="result"
     :pinned="pinned"
+    :selected="isBaseSelected"
     :group-index="groupIndex"
     :group-size="groupSize"
     @click-tag="onClickTag"
@@ -33,7 +34,12 @@ export default {
   }),
 
   computed: {
-    ...mapState(['statuses']),
+    ...mapState(['statuses', 'current']),
+
+    isBaseSelected() {
+      const { searchResult: { base }, $xml: { e2pMap }, current: { selected } } = this;
+      return e2pMap.get(base) === selected;
+    },
 
     params() {
       const { base, method, query } = this.searchResult;

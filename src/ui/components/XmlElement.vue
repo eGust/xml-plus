@@ -8,7 +8,7 @@
       .tag(:class="{ selected: status.selected }")
         | <
         .tag-name(@click="onSelected" :data-path="path") {{ tagName }}
-        template(v-if="status.open")
+        template(v-if="status.open || (isToggleDisabled && isSelfClosed)")
           .attribute(v-for="attr in attributes")
             | &nbsp;
             .name {{ attr.name }}
@@ -29,7 +29,7 @@
     template(v-else-if="status.open")
       .info.dark(v-if="hasChild")
         |  - {{ childCount }} children, {{ status.leafCount }} leafs
-    template(v-else)
+    template(v-else-if="!isSelfClosed")
       .info.light-dark.elements(v-if="hasChild")
         |  [{{ childCount }} children, {{ status.leafCount }} leafs...]&nbsp;
       .info.shorten-text(v-else :title="text")
@@ -101,16 +101,17 @@ const XmlElement = {
       return this.text ? !isInlineable(this.text) : false;
     },
 
+    isToggleDisabled() {
+      return this.toggle === 'disabled';
+    },
     isTogglable() {
-      if (this.toggle === 'disabled') return false;
-      return this.hasChild || this.hasIndividualText;
+      return !this.isToggleDisabled && (this.hasChild || this.hasIndividualText);
     },
     isOpen() {
       return this.status.open && this.isTogglable;
     },
     isSelfClosed() {
-      if (this.toggle === 'disabled') return !this.text;
-      return !(this.hasInlineText || this.isTogglable);
+      return !(this.isToggleDisabled ? this.text : (this.hasInlineText || this.isTogglable));
     },
 
     toggleClass() {

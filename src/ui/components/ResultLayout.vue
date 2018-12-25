@@ -2,7 +2,7 @@
   .result-layout
     .params(:class="{ invalid: !result.text }")
       | <
-      .node(@click="$emit('click-tag')") {{ params.tag }}
+      .node(:class="{ selected: selected }" @click="$emit('click-tag')") {{ params.tag }}
       | >.
       .method {{ params.method }}
       .selector {{ params.query }}
@@ -26,7 +26,7 @@ import GroupedList from './GroupedList';
 export default {
   name: 'ResultLayout',
   components: { GroupedList },
-  props: ['params', 'result', 'pinned', 'group-index', 'group-size'],
+  props: ['params', 'result', 'pinned', 'selected', 'group-index', 'group-size'],
 };
 </script>
 
@@ -52,6 +52,8 @@ export default {
 .node
   cursor pointer
   color dodgerblue
+  &.selected
+    color lime
 .selector
   color darkorange
   &:before
