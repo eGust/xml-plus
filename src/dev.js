@@ -1,4 +1,5 @@
 import qs from 'query-string';
+import $ from 'jquery';
 
 import startApp from './ui';
 
@@ -15,5 +16,6 @@ async function fetchXml(path) {
   const params = qs.parse(window.location.search);
   const xml = await fetchXml(params.xml);
   window.x = { n: xml.children[0], xml };
+  window.x.$ = $(window.x.n);
   startApp(xml, { isDev: true });
 })();

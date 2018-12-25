@@ -5,6 +5,7 @@
     :child-count="childCount"
     :text="text"
     :status="status"
+    :path="path"
     @toggle="onToggle"
     @select="onSelect"
     @hover-start="onHoverStart"

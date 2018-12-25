@@ -28,7 +28,7 @@ export default {
 
   data: () => ({
     search: {
-      method: 'CSS',
+      method: 'jQuery',
       selector: '',
     },
     pinnedResults: [],

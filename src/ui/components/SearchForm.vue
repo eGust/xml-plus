@@ -2,10 +2,11 @@
   #search-form
     .row
       .switch
-        .option(:class="{active: method == 'CSS'}" @click="changeMethod('CSS')") CSS
+        .option(:class="{active: method == 'jQuery'}" @click="changeMethod('jQuery')") jQuery
         .option(:class="{active: method == 'XPath'}" @click="changeMethod('XPath')") XPath
+        .option(:class="{active: method == 'CSS'}" @click="changeMethod('CSS')") CSS
       label.warning
-        | Selectors are
+        | All Selectors are
         .bold  CASE-SENSITIVE
     input(
       :value="selector"
@@ -88,6 +89,8 @@ export default {
     width 80px
     text-align center
     padding 6px
+    &:not(:first-child)
+      border-left 1px solid dodgerblue
   .option.active
     color white
     font-weight bold

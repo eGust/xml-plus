@@ -1,23 +1,28 @@
-const urlTypes = {};
+const tabTypes = {};
 const XML_TYPES = ['text/xml', 'application/xml'];
 
+// prevent Chrome slowness of loading big `xml` responses (>1MB)
+const CONTENT_TYPE_OVERRIDE = { responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }] };
+
 function detectXml(event) {
-  const { responseHeaders: headers, url: rawUrl } = event;
-  if (!headers) return;
+  const { responseHeaders: headers, tabId, url: rawUrl } = event;
+  if (!headers) return {};
 
   const contentType = (headers.find(({ name }) => name.toLowerCase() === 'content-type')
     .value || '').toLowerCase();
-  console.log('detectXml', { contentType, event });
+  console.debug('detectXml', { contentType, event });
 
   if (XML_TYPES.find(type => contentType.includes(type))) {
-    urlTypes[rawUrl] = 'XML';
-    return;
+    tabTypes[tabId] = 'XML';
+    return CONTENT_TYPE_OVERRIDE;
   }
 
   const url = new URL(rawUrl);
   if (url.pathname.toLowerCase().endsWith('.xml')) {
-    urlTypes[rawUrl] = contentType;
+    tabTypes[tabId] = contentType;
+    return CONTENT_TYPE_OVERRIDE;
   }
+  return {};
 }
 
 chrome.webRequest.onHeadersReceived.addListener(
@@ -26,14 +31,14 @@ chrome.webRequest.onHeadersReceived.addListener(
   ['blocking', 'responseHeaders'],
 );
 
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  const { url } = sender;
-  const contentType = urlTypes[url];
+chrome.runtime.onMessage.addListener((_message, sender, sendResponse) => {
+  const { url, tab: { id: tabId } } = sender;
+  const contentType = tabTypes[tabId];
   if (!contentType) {
     sendResponse(url.toLowerCase().endsWith('.xml') && 'XML');
     return;
   }
 
-  delete urlTypes[url];
+  delete tabTypes[url];
   sendResponse(contentType);
 });

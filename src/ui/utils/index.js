@@ -1,7 +1,9 @@
+import $ from 'jquery';
 import debounce from 'lodash/debounce';
 
 const searchCalls = {
   CSS: (root, selector) => root.querySelectorAll(selector),
+  jQuery: (root, selector) => $(root).find(selector).toArray(),
   XPath: (root, selector) => {
     const result = document.evaluate(selector, root);
     switch (result.resultType) {

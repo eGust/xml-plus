@@ -7,7 +7,7 @@
         .dash.unselectable -&nbsp;
       .tag(:class="{ selected: status.selected }")
         | <
-        .tag-name(@click="onSelected") {{ tagName }}
+        .tag-name(@click="onSelected" :data-path="path") {{ tagName }}
         template(v-if="status.open")
           .attribute(v-for="attr in attributes")
             | &nbsp;
@@ -64,6 +64,7 @@ const XmlElement = {
     'text',
     'status',
     'toggle',
+    'path',
   ],
 
   data: () => ({

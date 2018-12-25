@@ -43,13 +43,16 @@ export default {
     result() {
       const { error, result } = this.searchResult;
       if (error) {
-        const err = error.message;
-        const col = err.indexOf(':');
-        return {
-          error: err.slice(col + 1).trim(),
+        const data = {
+          error: error.message,
           text: null,
           nodes: null,
         };
+
+        if (error.name !== 'Error') {
+          data.error = data.error.slice(data.error.indexOf(':') + 1).trim();
+        }
+        return data;
       }
 
       if (!result) {
@@ -120,6 +123,7 @@ export default {
       } while (el);
 
       // make sure all parents are open
+      let parentStatus = {};
       for (el = node; ;) {
         const parent = el.parentElement;
         if (!parent) break;
@@ -129,10 +133,14 @@ export default {
           path,
           open: true,
           show: true,
+          ...parentStatus,
         };
-        if (parent.childCount > MAIN_GROUP_SIZE) {
-          const index = +path.lastIndexOf('/');
-          payload.childGroupIndex = Math.floor(index / MAIN_GROUP_SIZE);
+
+        if (parent.childElementCount > MAIN_GROUP_SIZE) {
+          const index = +path.slice(path.lastIndexOf('/') + 1);
+          parentStatus = { childGroupIndex: Math.floor(index / MAIN_GROUP_SIZE) };
+        } else {
+          parentStatus = {};
         }
 
         this.asyncUpdate({
@@ -142,13 +150,19 @@ export default {
         el = parent;
       }
 
+      const nodePath = e2pMap.get(node);
       // select clicked node
       this.asyncUpdate({
         name: 'updateCurrentElement',
         payload: {
           subject: 'selected',
-          path: e2pMap.get(node),
+          path: nodePath,
         },
+      });
+
+      this.$nextTick(() => {
+        const target = document.querySelector(`#xml-root [data-path="${nodePath}"]`);
+        if (target) target.scrollIntoView(target);
       });
     },
 
