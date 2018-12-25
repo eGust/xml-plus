@@ -28,8 +28,8 @@
 import { mapState, mapActions } from 'vuex';
 
 import { XmlElement, GroupedList } from '../components';
+import { MAIN_GROUP_SIZE } from './constants';
 
-const GROUP_SIZE = 50;
 const ElementTree = {
   name: 'ElementTree',
   components: { XmlElement, GroupedList },
@@ -67,12 +67,12 @@ const ElementTree = {
       return this.childCount === 0 ? this.element.innerHTML.trim() : null;
     },
 
-    groupSize: () => GROUP_SIZE,
+    groupSize: () => MAIN_GROUP_SIZE,
 
     childElements() {
       const { element: el, status: { childGroupIndex } } = this;
-      const offset = childGroupIndex * GROUP_SIZE;
-      const listSize = Math.min(this.childCount - offset, GROUP_SIZE);
+      const offset = childGroupIndex * MAIN_GROUP_SIZE;
+      const listSize = Math.min(this.childCount - offset, MAIN_GROUP_SIZE);
       const list = new Array(listSize);
 
       for (let i = 0; i < listSize; i += 1) {

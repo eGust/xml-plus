@@ -2,8 +2,8 @@
   #search-panel
     .search-result-container
       .result-content
-        SearchResult(v-for="sr in pinnedResults" :key="sr.key" :search-result="sr")
-        SearchResult(v-for="sr in searchResults" :key="sr.key" :search-result="sr")
+        SearchResult(v-for="sr in pinnedResults" :key="sr.key" :search-result="sr" :pinned="true")
+        SearchResult(v-for="sr in searchResults" :key="sr.key" :search-result="sr" :pinned="false")
     search-form(
       :method="search.method"
       :selector="search.selector"
@@ -17,10 +17,10 @@
 <script>
 import { mapState, mapActions } from 'vuex';
 
-import { PreviewResult, SearchForm, SearchResult } from '../components';
+import SearchResult from './SearchResult';
+import { PreviewResult, SearchForm } from '../components';
 import { searchSelector, autoSearch } from '../utils';
-
-const HISTORY_LIMIT = 5;
+import { HISTORY_LIMIT } from './constants';
 
 export default {
   name: 'SearchPanel',
@@ -34,6 +34,7 @@ export default {
     pinnedResults: [],
     searchResults: [],
     previewResult: { error: null, result: null },
+    resultKeyIndex: 0,
   }),
 
   computed: {
@@ -60,10 +61,12 @@ export default {
     },
 
     pushSearchResult(result) {
-      console.log('push', result);
+      const key = this.resultKeyIndex + 1;
+      this.resultKeyIndex = key;
+
       this.previewResult = { error: null, result: null };
-      const items = [...this.searchResults, { ...result, pinned: false }];
-      this.searchResults = items.slice(items.length - HISTORY_LIMIT);
+      const items = [...this.searchResults, { ...result, key }];
+      this.searchResults = items.slice(Math.max(items.length - HISTORY_LIMIT, 0));
       this.search.selector = '';
       this.onAutoSearch();
     },
@@ -136,5 +139,4 @@ export default {
   white-space pre-wrap
   max-height 100%
   overflow auto
-  padding-left 12px
 </style>

@@ -110,9 +110,9 @@ const processXmlStore = (xml) => {
         });
       },
 
-      updateElementStatus: (state, { path, ...value }) => {
+      updateElementStatus: (state, { path, ...status }) => {
         const { statuses } = state;
-        statuses[path] = { ...statuses[path], ...value };
+        statuses[path] = { ...statuses[path], ...status };
       },
       updateCurrentElement: (state, { subject, path }) => {
         const { current, statuses } = state;

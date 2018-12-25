@@ -21,14 +21,6 @@ export default {
   name: 'SearchForm',
   props: ['method', 'selector'],
   computed: {
-    maxDepth() {
-      return this.levels.length;
-    },
-
-    nodeCount() {
-      return this.levels.reduce((sum, cnt) => sum + cnt, 0);
-    },
-
     placeholder() {
       return `Search: ${this.method} Selector`;
     },

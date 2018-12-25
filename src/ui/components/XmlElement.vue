@@ -17,7 +17,7 @@
             | "
         template(v-else-if="hasAttribute")
           |  ...
-        | {{ hasInlineText || isTogglable ? '>' : ' />' }}
+        | {{ isSelfClosed ? ' /' : '' }}>
 
     template(v-if="hasInlineText")
       .inline-text.text-child {{ text }}
@@ -63,6 +63,7 @@ const XmlElement = {
     'childCount',
     'text',
     'status',
+    'toggle',
   ],
 
   data: () => ({
@@ -100,10 +101,15 @@ const XmlElement = {
     },
 
     isTogglable() {
+      if (this.toggle === 'disabled') return false;
       return this.hasChild || this.hasIndividualText;
     },
     isOpen() {
       return this.status.open && this.isTogglable;
+    },
+    isSelfClosed() {
+      if (this.toggle === 'disabled') return !this.text;
+      return !(this.hasInlineText || this.isTogglable);
     },
 
     toggleClass() {
