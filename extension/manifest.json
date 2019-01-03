@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "XML Plus",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "XML Viewer",
   "author": "eGust",
   "homepage_url": "https://github.com/eGust/xml-plus.chrome-extension",

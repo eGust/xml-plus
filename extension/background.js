@@ -2,25 +2,28 @@ const tabTypes = {};
 const XML_TYPES = ['text/xml', 'application/xml'];
 
 // prevent Chrome slowness of loading big `xml` responses (>1MB)
-const CONTENT_TYPE_OVERRIDE = { responseHeaders: [{ name: 'Content-Type', value: 'text/plain' }] };
+const CONTENT_TYPE_TEXT = { name: 'Content-Type', value: 'text/plain' };
 
-function detectXml(event) {
-  const { responseHeaders: headers, tabId, url: rawUrl } = event;
-  if (!headers) return {};
+function detectXml({ responseHeaders, tabId, url: rawUrl }) {
+  if (!responseHeaders) return {};
 
-  const contentType = (headers.find(({ name }) => name.toLowerCase() === 'content-type')
-    .value || '').toLowerCase();
-  console.debug('detectXml', { contentType, event });
-
-  if (XML_TYPES.find(type => contentType.includes(type))) {
+  const contentHeader = responseHeaders.find(({ name }) => name.toLowerCase() === 'content-type');
+  const contentType = (contentHeader && contentHeader.value) || '';
+  if (XML_TYPES.find(type => contentType.toLowerCase().includes(type))) {
     tabTypes[tabId] = 'XML';
-    return CONTENT_TYPE_OVERRIDE;
+    contentHeader.value = contentType.replace(/(?:text|application)\/xml/, 'text/plain');
+    return { responseHeaders };
   }
 
   const url = new URL(rawUrl);
   if (url.pathname.toLowerCase().endsWith('.xml')) {
     tabTypes[tabId] = contentType;
-    return CONTENT_TYPE_OVERRIDE;
+    if (contentHeader) {
+      contentHeader.value = 'text/plain';
+    } else {
+      responseHeaders.push(CONTENT_TYPE_TEXT);
+    }
+    return { responseHeaders };
   }
   return {};
 }
