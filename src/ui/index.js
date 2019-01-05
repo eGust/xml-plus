@@ -1,4 +1,6 @@
 import Vue from 'vue';
+import $ from 'jquery';
+
 import App from './App';
 import processXmlStore from './store';
 
@@ -9,6 +11,13 @@ const startApp = async (xmlDoc, { isDev = false } = {}) => {
   const { store, xml } = processXmlStore(xmlDoc);
   Vue.prototype.$xml = xml;
   Vue.prototype.$isDev = isDev;
+
+  window.x = {
+    doc: xmlDoc,
+    root: xml.root,
+    $: $(xml.root),
+    history: {},
+  };
 
   new Vue({
     store,

@@ -5,8 +5,10 @@ Chrome Extension to display XML files built with Vue
 ## Features
 
 1. Supports both `CSS` and `XPath` selectors.
-2. Both `querySelectorAll` and `jQuery` flavors of CSS selectors are available.
-3. Optimized for big XML responses. I could not find a way to speed up loading local XML files.
+2. Supports text search and `Regular Expression` search.
+3. Both `querySelectorAll` and `jQuery` flavors of CSS selectors are available.
+4. Optimized for big XML responses. I could not find a way to speed up loading local XML files.
+5. `RegEx` is the only one **case-insensitive**
 
 ## Libraries and techs used
 

@@ -2,12 +2,13 @@
   #search-form
     .row
       .switch
+        .option(:class="{active: method == 'Text'}" @click="changeMethod('Text')") Text
         .option(:class="{active: method == 'jQuery'}" @click="changeMethod('jQuery')") jQuery
         .option(:class="{active: method == 'XPath'}" @click="changeMethod('XPath')") XPath
         .option(:class="{active: method == 'CSS'}" @click="changeMethod('CSS')") CSS
+        .option(:class="{active: method == 'RegExpr'}" @click="changeMethod('RegExpr')") RegEx
       label.warning
-        | All Selectors are
-        .bold  CASE-SENSITIVE
+        .bold {{ caseType }}
     input(
       :value="selector"
       :placeholder="placeholder"
@@ -24,6 +25,9 @@ export default {
   computed: {
     placeholder() {
       return `Search: ${this.method} Selector`;
+    },
+    caseType() {
+      return this.method === 'RegExpr' ? 'CASE-INSENSITIVE' : 'CASE-SENSITIVE';
     },
   },
 
