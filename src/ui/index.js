@@ -16,7 +16,7 @@ const startApp = async (xmlDoc, { isDev = false } = {}) => {
     doc: xmlDoc,
     root: xml.root,
     $: $(xml.root),
-    history: {},
+    history: [],
   };
 
   new Vue({

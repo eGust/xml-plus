@@ -9,6 +9,11 @@ Chrome Extension to display XML files built with Vue
 3. Both `querySelectorAll` and `jQuery` flavors of CSS selectors are available.
 4. Optimized for big XML responses. I could not find a way to speed up loading local XML files.
 5. `RegEx` is the only one **case-insensitive**
+6. Global `x` variable (`window.x`) is available in DevTools:
+    * `doc` - raw XML document object
+    * `root` - root XML element object
+    * `$` - jQuery with root element
+    * `history` - search results
 
 ## Libraries and techs used
 

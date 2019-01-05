@@ -69,6 +69,7 @@ export default {
       this.searchResults = items.slice(Math.max(items.length - HISTORY_LIMIT, 0));
       this.search.selector = '';
       this.onAutoSearch();
+      window.x.history.push(result);
     },
 
     onStartSearch() {
