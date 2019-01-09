@@ -1,25 +1,25 @@
 const process = require('process');
+const { exec } = require('child_process');
+
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const event = process.env.npm_lifecycle_event;
 const isNotProd = process.env.NODE_ENV !== 'production';
 
-const template = 'src/template.html';
-
 const options = {
   entry: 'src/options/index.js',
-  template,
+  template: 'src/template.html',
 };
 
 const content = {
   entry: 'src/content/index.js',
   filename: '../tmp/content.html',
-  template,
+  template: 'src/template.html',
 };
 
 const index = {
   entry: 'src/website/index.js',
-  template,
+  template: 'src/website/index.html',
 };
 
 const pages = (() => {
@@ -37,8 +37,11 @@ const pages = (() => {
 const outputDir = (() => {
   switch (event) {
     case 'dev_web':
-    case 'website':
+    case 'website': {
+      // some strange errors when `public` folder not existing
+      exec('mkdir public');
       return 'public';
+    }
     default:
       return 'extension';
   }
@@ -119,6 +122,9 @@ module.exports = {
         break;
       }
       default:
+        config
+          .plugin('copy')
+          .tap(() => []);
     }
 
     config.optimization.delete('splitChunks');
