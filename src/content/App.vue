@@ -13,8 +13,8 @@
 
 <script>
 import { mapState } from 'vuex';
-import { ElementTree, SearchPanel } from './connected';
-import { SummaryBar } from './components';
+import { ElementTree, SearchPanel } from '../ui/connected';
+import { SummaryBar } from '../ui/components';
 
 export default {
   name: 'app',
@@ -29,12 +29,8 @@ export default {
     });
   },
 
-  data: () => ({
-    url: window.location.href,
-  }),
-
   computed: {
-    ...mapState(['current']),
+    ...mapState(['current', 'url']),
 
     rootElement() {
       return this.$xml.root;

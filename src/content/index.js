@@ -1,4 +1,4 @@
-import startApp from '../ui';
+import startApp from './startApp';
 
 const NAMESPACE = 'http://www.w3.org/1999/xhtml';
 
@@ -10,7 +10,7 @@ function initApp(xml) {
   document.body.innerHTML = body;
   // must replace `document.createElement` so Vue can create Elements with styles
   document.createElement = (tag, opts) => document.createElementNS(NAMESPACE, tag, opts);
-  startApp(xml);
+  startApp(xml, window.location.href);
 }
 
 chrome.runtime.sendMessage({ message: 'QUERY_XML' }, async (xmlType) => {

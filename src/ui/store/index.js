@@ -86,67 +86,76 @@ function generateStateMaps(xml) {
   };
 }
 
-const processXmlStore = (xml) => {
+export const store = new Vuex.Store({
+  state: {
+    url: null,
+    statuses: {},
+    current: {
+      selected: null,
+      hovering: null,
+    },
+  },
+
+  mutations: {
+    /* eslint-disable no-param-reassign */
+    reset: (state) => {
+      state.url = null;
+      state.statuses = {};
+      state.current = {
+        selected: null,
+        hovering: null,
+      };
+    },
+    /* eslint-enable no-param-reassign */
+
+    setElementStatus: (state, { path, status }) => {
+      const { statuses } = state;
+      if (state[path]) return;
+
+      Vue.set(statuses, path, {
+        ...DEFAULT_STATUSES,
+        ...status,
+      });
+    },
+
+    updateElementStatus: (state, { path, ...status }) => {
+      const { statuses } = state;
+      statuses[path] = { ...statuses[path], ...status };
+    },
+
+    updateCurrentElement: (state, { subject, path }) => {
+      const { current, statuses } = state;
+      const prevPath = current[subject];
+      if (prevPath) {
+        statuses[prevPath][subject] = false;
+      }
+
+      if (path) {
+        statuses[path][subject] = true;
+      }
+      current[subject] = path;
+    },
+
+    updateSubject: (state, { subject, data }) => {
+      // eslint-disable-next-line no-param-reassign
+      state[subject] = { ...state[subject], ...data };
+    },
+  },
+
+  actions: {
+    asyncUpdate: ({ commit }, { name, payload }) => {
+      commit(name, payload);
+    },
+  },
+});
+
+export const processXml = (xml) => {
   console.time('build store');
   const root = xml.children[0];
   const { maps, levels, ...cached } = generateStateMaps(root);
-  const store = new Vuex.Store({
-    state: {
-      statuses: {},
-      current: {
-        selected: null,
-        hovering: null,
-      },
-    },
-
-    mutations: {
-      setElementStatus: (state, { path, status }) => {
-        const { statuses } = state;
-        if (state[path]) return;
-
-        Vue.set(statuses, path, {
-          ...DEFAULT_STATUSES,
-          ...status,
-        });
-      },
-
-      updateElementStatus: (state, { path, ...status }) => {
-        const { statuses } = state;
-        statuses[path] = { ...statuses[path], ...status };
-      },
-      updateCurrentElement: (state, { subject, path }) => {
-        const { current, statuses } = state;
-        const prevPath = current[subject];
-        if (prevPath) {
-          statuses[prevPath][subject] = false;
-        }
-
-        if (path) {
-          statuses[path][subject] = true;
-        }
-        current[subject] = path;
-      },
-
-      updateSubject: (state, { subject, data }) => {
-        // eslint-disable-next-line no-param-reassign
-        state[subject] = { ...state[subject], ...data };
-      },
-    },
-
-    actions: {
-      asyncUpdate: ({ commit }, { name, payload }) => {
-        commit(name, payload);
-      },
-    },
-  });
   console.timeEnd('build store');
   console.log(levels);
   return {
-    store,
-    xml: {
-      ...maps, root, levels, cached,
-    },
+    ...maps, root, levels, cached,
   };
 };
-
-export default processXmlStore;

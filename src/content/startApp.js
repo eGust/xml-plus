@@ -2,15 +2,15 @@ import Vue from 'vue';
 import $ from 'jquery';
 
 import App from './App';
-import processXmlStore from './store';
+import { processXml, store } from '../ui/store';
 
 Vue.config.productionTip = false;
 
-const startApp = async (xmlDoc, { isDev = false } = {}) => {
+export default (xmlDoc, url) => {
   console.time('init');
-  const { store, xml } = processXmlStore(xmlDoc);
+  const xml = processXml(xmlDoc);
   Vue.prototype.$xml = xml;
-  Vue.prototype.$isDev = isDev;
+  store.state.url = url;
 
   window.x = {
     doc: xmlDoc,
@@ -24,5 +24,3 @@ const startApp = async (xmlDoc, { isDev = false } = {}) => {
     render: h => h(App),
   }).$mount('#app');
 };
-
-export default startApp;

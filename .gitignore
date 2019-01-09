@@ -2,6 +2,8 @@
 node_modules
 /dist
 /tmp
+/extension
+/public
 
 # local env files
 .env.local

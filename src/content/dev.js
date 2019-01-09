@@ -1,18 +1,20 @@
 import qs from 'query-string';
 
-import startApp from './ui';
+import startApp from './startApp';
 
 const DEFAULT_XML = '/xml/default.xml';
 
 // ?xml=/xml/test.xml
-async function fetchXml(path) {
-  const response = await fetch(path || DEFAULT_XML);
+async function fetchDevXml(url) {
+  const response = await fetch(url);
   const raw = await response.text();
   return (new DOMParser()).parseFromString(raw, 'text/xml');
 }
 
 (async () => {
   const params = qs.parse(window.location.search);
-  const xml = await fetchXml(params.xml);
-  startApp(xml, { isDev: true });
+  const path = params.xml || DEFAULT_XML;
+  const xml = await fetchDevXml(path);
+  const url = new URL(path, window.location.href);
+  startApp(xml, url.href);
 })();
