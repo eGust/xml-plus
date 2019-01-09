@@ -3,9 +3,9 @@ const process = require('process');
 const isNotProd = process.env.NODE_ENV !== 'production';
 
 const pages = {
-  content: isNotProd ? 'src/content/index.js' : {
+  content: {
     entry: 'src/content/index.js',
-    filename: '/dev/null',
+    filename: '../tmp/content.html',
   },
   options: 'src/options/index.js',
 };
