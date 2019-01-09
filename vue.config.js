@@ -109,15 +109,13 @@ module.exports = {
       case 'website': {
         config
           .plugin('copy')
-          .tap((args) => {
-            const [params] = args;
-            params.push({
+          .tap(() => [[
+            {
               from: 'src/extension/icons/logo-48.png',
-              to: 'public/favicon.png',
+              to: 'favicon.png',
               toType: 'file',
-            });
-            return args;
-          });
+            },
+          ]]);
         break;
       }
       default:
