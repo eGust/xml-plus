@@ -5,7 +5,10 @@ const XML_TYPES = ['text/xml', 'application/xml'];
 const CONTENT_TYPE_TEXT = { name: 'Content-Type', value: 'text/plain' };
 
 function detectXml({ responseHeaders, tabId, url: rawUrl }) {
-  if (!responseHeaders) return {};
+  if (!responseHeaders) {
+    delete tabTypes[tabId];
+    return {};
+  }
 
   const contentHeader = responseHeaders.find(({ name }) => name.toLowerCase() === 'content-type');
   const contentType = (contentHeader && contentHeader.value) || '';
@@ -42,6 +45,6 @@ chrome.runtime.onMessage.addListener((_message, sender, sendResponse) => {
     return;
   }
 
-  delete tabTypes[url];
+  delete tabTypes[tabId];
   sendResponse(contentType);
 });
