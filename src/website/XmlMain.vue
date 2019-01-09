@@ -1,20 +1,26 @@
 <template lang="pug">
-  #app
-    header {{ url }}
-    hr
-    xml-main(v-if="isXmlReady")
+  #web-xml
+    main
+      section#xml-root
+        element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
+      footer
+        summary-bar(:levels="levels")
+    aside
+      search-panel
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import XmlMain from './XmlMain';
+import { ElementTree, SearchPanel } from '../ui/connected';
+import { SummaryBar } from '../ui/components';
 
 export default {
-  name: 'app',
+  name: 'xml-main',
 
-  components: { XmlMain },
+  components: { ElementTree, SearchPanel, SummaryBar },
 
   mounted() {
+    console.log(this.$xml);
     this.$nextTick(() => {
       const loading = document.getElementById('loading-cloak');
       if (loading) loading.parentNode.removeChild(loading);
@@ -22,10 +28,19 @@ export default {
   },
 
   computed: {
-    ...mapState(['url', 'xmlKey']),
+    ...mapState(['xmlKey']),
 
-    isXmlReady() {
-      return !!this.xmlKey;
+    rootElement() {
+      return this.$xml.root;
+    },
+
+    rootPath() {
+      const el = this.rootElement;
+      return el ? el.tagName : 'XML';
+    },
+
+    levels() {
+      return this.$xml.levels;
     },
   },
 };

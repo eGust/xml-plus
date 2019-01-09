@@ -109,6 +109,7 @@ module.exports = {
           });
         break;
       }
+      case 'dev_web':
       case 'website': {
         config
           .plugin('copy')
