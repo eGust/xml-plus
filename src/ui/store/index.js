@@ -88,6 +88,7 @@ function generateStateMaps(xml) {
 
 export const store = new Vuex.Store({
   state: {
+    xml: null,
     url: null,
     xmlKey: null,
     statuses: {},
@@ -97,11 +98,16 @@ export const store = new Vuex.Store({
     },
   },
 
+  getters: {
+    xmlData: ({ xml }) => xml,
+  },
+
   mutations: {
     /* eslint-disable no-param-reassign */
-    reset: (state) => {
-      state.url = null;
-      state.xmlKey = null;
+    reset: (state, { xml = null, url = null, xmlKey = null }) => {
+      state.xml = xml;
+      state.url = url;
+      state.xmlKey = xmlKey;
       state.statuses = {};
       state.current = {
         selected: null,
@@ -145,7 +151,7 @@ export const store = new Vuex.Store({
   },
 
   actions: {
-    asyncUpdate: ({ commit }, { name, payload }) => {
+    asyncUpdate: ({ commit }, { name, payload = {} }) => {
       commit(name, payload);
     },
   },

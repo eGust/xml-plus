@@ -12,7 +12,7 @@ const args = argv.slice(2);
 const app = new Koa();
 
 const isDebug = !!args.find(s => s.toLowerCase() === '--debug');
-const port = isDebug ? 8080 : 80;
+const port = isDebug ? 8000 : 80;
 const cacheControl = isDebug ? 'max-age=-1' : 'max-age=3600';
 const maxage = isDebug ? 0 : 3600000;
 

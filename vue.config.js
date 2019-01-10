@@ -1,6 +1,9 @@
 const process = require('process');
 const { exec } = require('child_process');
 
+// some strange errors when `public` folder not existing
+exec('mkdir public');
+
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const event = process.env.npm_lifecycle_event;
@@ -38,8 +41,6 @@ const outputDir = (() => {
   switch (event) {
     case 'dev_web':
     case 'website': {
-      // some strange errors when `public` folder not existing
-      exec('mkdir public');
       return 'public';
     }
     default:

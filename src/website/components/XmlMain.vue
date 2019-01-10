@@ -1,5 +1,5 @@
 <template lang="pug">
-  #web-xml
+  #xml-main
     main
       section#xml-root
         element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
@@ -11,27 +11,23 @@
 
 <script>
 import { mapState } from 'vuex';
-import { ElementTree, SearchPanel } from '../ui/connected';
-import { SummaryBar } from '../ui/components';
+import { ElementTree, SearchPanel } from '../../ui/connected';
+import { SummaryBar } from '../../ui/components';
 
 export default {
   name: 'xml-main',
 
   components: { ElementTree, SearchPanel, SummaryBar },
 
-  mounted() {
-    console.log(this.$xml);
-    this.$nextTick(() => {
-      const loading = document.getElementById('loading-cloak');
-      if (loading) loading.parentNode.removeChild(loading);
-    });
-  },
-
   computed: {
     ...mapState(['xmlKey']),
 
+    xmlData() {
+      return this.$d.xml[this.xmlKey];
+    },
+
     rootElement() {
-      return this.$xml.root;
+      return this.xmlData.root;
     },
 
     rootPath() {
@@ -40,43 +36,20 @@ export default {
     },
 
     levels() {
-      return this.$xml.levels;
+      return this.xmlData.levels;
     },
   },
 };
 </script>
 
 <style lang="stylus">
-*
-  box-sizing border-box
-body
-  margin 0
-  padding 0
-  font-family Helvetica, Arial, sans-serif
-  *
-    margin 0
-    padding 0
-
-*::-webkit-scrollbar
-  width 8px
-
-*::-webkit-scrollbar-thumb
-  background: #888;
-  border-radius: 20px;
-
-*::-webkit-scrollbar-track
-  background: #444
-  border-radius: 20px
-
-#webkit-xml-viewer-source-xml
-  display none
-#app
+#xml-main
   display flex
   flex-direction row
   position relative
   color white
   width 100vw
-  height 100vh
+  height calc(100vh - 36px)
 main
   flex 5
   display flex

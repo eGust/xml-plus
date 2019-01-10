@@ -70,8 +70,6 @@ body
   background: #444
   border-radius: 20px
 
-#webkit-xml-viewer-source-xml
-  display none
 #app
   display flex
   flex-direction row

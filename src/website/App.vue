@@ -1,31 +1,72 @@
 <template lang="pug">
-  #app
-    header {{ url }}
-    hr
+  #app(@dragover.stop.prevent @drop.stop.prevent)
+    url-box(:current-url="url" :disabled="loading" @go="onGo")
     xml-main(v-if="isXmlReady")
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import XmlMain from './XmlMain';
+import Vue from 'vue';
+import $ from 'jquery';
+import { mapState, mapActions } from 'vuex';
+
+import { processXml } from '../ui/store';
+import XmlMain from './components/XmlMain';
+import UrlBox from './components/UrlBox';
+
+import readFileText from './readFileText';
 
 export default {
   name: 'app',
 
-  components: { XmlMain },
+  components: { XmlMain, UrlBox },
 
-  mounted() {
-    this.$nextTick(() => {
-      const loading = document.getElementById('loading-cloak');
-      if (loading) loading.parentNode.removeChild(loading);
-    });
-  },
+  data: () => ({ loading: false }),
 
   computed: {
     ...mapState(['url', 'xmlKey']),
 
     isXmlReady() {
       return !!this.xmlKey;
+    },
+  },
+
+  methods: {
+    ...mapActions(['asyncUpdate']),
+
+    async onGo({ url, file, fileUrl }) {
+      this.loading = true;
+      this.$d.xml = null;
+      this.asyncUpdate({ name: 'reset' });
+      if (url) {
+        const res = await fetch(`/fetch?url=${encodeURIComponent(url)}`);
+        this.onXmlReady(await res.text(), url);
+      } else if (file) {
+        this.onXmlReady(await readFileText(file), fileUrl);
+      } else {
+        this.loading = false;
+      }
+    },
+
+    onXmlReady(xmlText, url) {
+      try {
+        const xmlKey = Date.now().toString(36);
+        console.log({ url, xmlText, xmlKey });
+        const xmlDoc = (new DOMParser()).parseFromString(xmlText, 'text/xml');
+        const xml = processXml(xmlDoc);
+
+        window.x = {
+          doc: xmlDoc,
+          root: xml.root,
+          $: $(xml.root),
+          history: [],
+        };
+
+        this.$d.xml = { [xmlKey]: xml };
+        Vue.prototype.$xml = xml;
+        this.asyncUpdate({ name: 'reset', payload: { xmlKey, url } });
+      } finally {
+        this.loading = false;
+      }
     },
   },
 };
@@ -38,6 +79,7 @@ body
   margin 0
   padding 0
   font-family Helvetica, Arial, sans-serif
+  background-color #222
   *
     margin 0
     padding 0
@@ -53,34 +95,11 @@ body
   background: #444
   border-radius: 20px
 
-#webkit-xml-viewer-source-xml
-  display none
 #app
   display flex
-  flex-direction row
+  flex-direction column
   position relative
   color white
   width 100vw
   height 100vh
-main
-  flex 5
-  display flex
-  flex-direction column
-  max-width 1100px
-  background-color #222
-  & > *
-    position relative
-  #xml-root
-    flex 1
-    padding 8px 20px
-    overflow-y auto
-  header
-    font-size 14pt
-    padding 12px 20px
-  footer
-    height 30px
-aside
-  flex 3
-  min-width 300px
-  position relative
 </style>
