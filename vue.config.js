@@ -5,17 +5,17 @@ const { exec } = require('child_process');
 exec('mkdir public');
 
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
-const { DefinePlugin } = require('webpack');
 
-const event = env.npm_lifecycle_event;
-const isProd = env.NODE_ENV === 'production';
+const EVENT = env.npm_lifecycle_event;
+const IS_PROD = env.NODE_ENV === 'production';
+const FOR_WEB = EVENT === 'web-dev' || EVENT === 'website';
 
 const content = {
   entry: 'src/content/index.js',
   template: 'src/content/index.html',
 };
 
-if (isProd) {
+if (IS_PROD) {
   content.filename = '../tmp/content.html';
 }
 
@@ -29,33 +29,22 @@ const options = {
   template: 'src/website/options.html',
 };
 
-const pages = (() => {
-  switch (event) {
-    case 'web':
-    case 'website':
-      return { index };
-    default:
-      return { content, options };
-  }
-})();
+const pages = FOR_WEB ? { index } : { content, options };
 
-const plugins = event === 'website' ? [
+const plugins = EVENT === 'website' ? [
   new CompressionWebpackPlugin({
     filename: '[path].gz[query]',
     algorithm: 'gzip',
     test: new RegExp('\\.(js|css)$'),
   }),
-] : [
-  new DefinePlugin({
-    PROXY: env.PROXY || null,
-  }),
-];
+] : [];
 
 module.exports = {
   filenameHashing: false,
+  outputDir: FOR_WEB ? 'public' : 'dist',
   // Use VSCode lint instead of eslint-loader
   // lintOnSave: false,
-  productionSourceMap: !isProd,
+  productionSourceMap: !IS_PROD,
   pages,
   css: {
     // dev can also hot-reload style changes
@@ -75,39 +64,39 @@ module.exports = {
       .use('vue-svg-loader')
       .loader('vue-svg-loader');
 
-    switch (event) {
-      case 'web':
-      case 'website': {
-        config
-          .plugin('copy')
-          .tap(() => [[
-            {
-              from: 'src/extension/icons/logo-48.png',
-              to: 'favicon.png',
-              toType: 'file',
-            },
-          ]]);
-        break;
-      }
-      default: {
-        const extension = {
-          from: 'src/extension',
-          toType: 'dir',
-        };
-        const xmlFiles = {
-          from: 'tests/xml',
-          to: 'xml',
-          toType: 'dir',
-        };
-        config
-          .plugin('copy')
-          .tap(() => [
-            isProd || event === 'watch' ? [extension] : [extension, xmlFiles],
-          ]);
-      }
-    }
+    config
+      .plugin('define')
+      .tap((defs) => {
+        Object.assign(defs[0], { PROXY: JSON.stringify(env.PROXY || null) });
+        return defs;
+      });
+    if (FOR_WEB) {
+      config
+        .plugin('copy')
+        .tap(() => [[
+          {
+            from: 'src/extension/icons/logo-48.png',
+            to: 'favicon.png',
+            toType: 'file',
+          },
+        ]]);
+    } else {
+      const extension = {
+        from: 'src/extension',
+        toType: 'dir',
+      };
+      const xmlFiles = {
+        from: 'tests/xml',
+        to: 'xml',
+        toType: 'dir',
+      };
+      config
+        .plugin('copy')
+        .tap(() => [
+          IS_PROD || EVENT === 'watch' ? [extension] : [extension, xmlFiles],
+        ]);
 
-    config.optimization.delete('splitChunks');
-    // don't copy `public/xml` folder which is just for testing
+      config.optimization.delete('splitChunks');
+    }
   },
 };

@@ -1,17 +1,21 @@
+import $ from 'jquery';
 import debounce from 'lodash/debounce';
 
-import CSS from './css';
-import XPath from './xPath';
+import css from './css';
+import xPath from './xPath';
 import jQuery from './jQuery';
-import Text from './text';
-import RegExpr from './regExpr';
+import text from './text';
+import regExpr from './regExpr';
+
+export { default as formatSize } from './formatSize';
+export { default as readFileText } from './readFileText';
 
 const searchCalls = {
-  Text,
-  RegExpr,
-  CSS,
+  Text: text,
+  RegExpr: regExpr,
+  CSS: css,
   jQuery,
-  XPath,
+  XPath: xPath,
 };
 
 function startSearch({
@@ -44,8 +48,21 @@ export const autoSearch = debounce(
   (args, resolver) => startSearch({ ...args, resolver, preview: true }),
   400,
 );
+
 export const searchSelector = (args, resolver) => startSearch({
   ...args,
   resolver,
   preview: false,
+});
+
+export const buildX = (xmlDoc, { root }) => ({
+  doc: xmlDoc,
+  root,
+  $: $(root),
+  $q: (expr, el = root) => jQuery(el, expr),
+  cs: (expr, el = root) => css(el, expr),
+  re: (expr, el = root) => regExpr(el, expr),
+  tx: (expr, el = root) => text(el, expr),
+  xp: (expr, el = root) => xPath(el, expr),
+  history: [],
 });

@@ -1,8 +1,8 @@
 import Vue from 'vue';
-import $ from 'jquery';
 
 import App from './App';
 import { processXml, store } from '../ui/store';
+import { buildX } from '../ui/utils';
 
 Vue.config.productionTip = false;
 
@@ -12,12 +12,7 @@ export default (xmlDoc) => {
   Vue.prototype.$xml = xml;
   store.state.url = window.location.href;
 
-  window.x = {
-    doc: xmlDoc,
-    root: xml.root,
-    $: $(xml.root),
-    history: [],
-  };
+  window.x = buildX(xmlDoc, xml);
 
   new Vue({
     store,

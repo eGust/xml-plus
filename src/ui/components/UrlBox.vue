@@ -22,20 +22,10 @@
 
 <script>
 import XmlIcon from '../../assets/xml.svg';
+import { formatSize } from '../utils';
 
 const isXmlType = ({ type }) => type === 'text/xml' || type === 'application/xml';
 const reValidLink = /^https?:\/\/\w+/;
-
-const KiB = 1024;
-const MiB = KiB ** 2;
-const GiB = KiB ** 3;
-
-const formatSize = size => (
-  size > GiB ? `${(size / GiB).toFixed(2)} GiB`
-    : size > MiB ? `${(size / MiB).toFixed(2)} MiB`
-      : size > KiB ? `${(size / KiB).toFixed(2)} KiB`
-        : `${size} Bytes`
-);
 
 export default {
   name: 'url-box',
@@ -114,8 +104,8 @@ export default {
     onClickGo() {
       if (!this.goable) return;
 
-      const { newUrl: url, xmlFile: file, fileInfo: fileUrl } = this;
-      this.$emit('go', { url, file, fileUrl });
+      const { newUrl: url, xmlFile: file } = this;
+      this.$emit('go', { url, file });
       this.$nextTick(() => {
         this.url = '';
         this.xmlFile = null;
@@ -144,7 +134,7 @@ header
     border 1px solid lightskyblue
     width calc(100% - 140px)
     min-width 250px
-    max-width 1000px
+    max-width 1050px
     &.green
       background-color darkgreen
     &.red

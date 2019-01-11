@@ -154,7 +154,7 @@ export const processXml = (xml) => {
   const root = xml.children[0];
   const { maps, levels, ...cached } = generateStateMaps(root);
   console.timeEnd('build store');
-  console.log(levels);
+  console.debug(levels);
   return {
     ...maps, root, levels, cached,
   };

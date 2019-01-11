@@ -6,15 +6,14 @@
 
 <script>
 import Vue from 'vue';
-import $ from 'jquery';
 import { mapState, mapActions } from 'vuex';
 
 import { processXml } from '../ui/store';
 import { UrlBox } from '../ui/components';
 import { XmlMain } from '../ui/connected';
 
-import readFileText from './readFileText';
 import buildFetchUrl from './buildFetchUrl';
+import { buildX, readFileText, formatSize } from '../ui/utils';
 
 export default {
   name: 'app',
@@ -34,38 +33,43 @@ export default {
   methods: {
     ...mapActions(['asyncUpdate']),
 
-    async onGo({ url, file, fileUrl }) {
+    async onGo({ url, file }) {
       this.xmlStatus = 'loading';
       this.rootElement = null;
       this.levels = null;
       Vue.prototype.$xml = null;
 
       this.asyncUpdate({ name: 'reset' });
-      if (url) {
-        const fetchUrl = buildFetchUrl(url);
-        const res = fetchUrl && await fetch(fetchUrl);
-        this.onXmlReady(res && await res.text(), url);
-      } else if (file) {
-        this.onXmlReady(await readFileText(file), fileUrl);
-      } else {
+      try {
+        if (url) {
+          const fetchUrl = buildFetchUrl(url);
+          const res = fetchUrl && await fetch(fetchUrl);
+          this.onXmlReady(res && await res.text(), url);
+        } else if (file) {
+          this.onXmlReady(await readFileText(file), `<FILE: ${file.name}>`);
+        } else {
+          this.xmlStatus = null;
+        }
+      } catch (e) {
+        console.error(e);
         this.xmlStatus = null;
       }
     },
 
     onXmlReady(xmlText, url) {
       try {
-        console.log({ url, xmlText });
+        console.debug({ url, xmlText });
         const xmlDoc = (new DOMParser()).parseFromString(xmlText, 'text/xml');
         const xml = processXml(xmlDoc);
 
-        window.x = {
-          doc: xmlDoc,
-          root: xml.root,
-          $: $(xml.root),
-          history: [],
-        };
+        window.x = buildX(xmlDoc, xml);
 
-        this.asyncUpdate({ name: 'reset', payload: { url } });
+        this.asyncUpdate({
+          name: 'reset',
+          payload: {
+            url: `${url} (${formatSize(xmlText.length)})`,
+          },
+        });
         Vue.prototype.$xml = xml;
         this.rootElement = xml.root;
         this.levels = xml.levels;

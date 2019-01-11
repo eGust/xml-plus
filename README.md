@@ -9,11 +9,19 @@ Chrome Extension to display XML files built with Vue
 3. Both `querySelectorAll` and `jQuery` flavors of CSS selectors are available.
 4. Optimized for big XML responses. I could not find a way to speed up loading local XML files.
 5. `RegEx` is the only one **case-insensitive**
-6. Global `x` variable (`window.x`) is available in DevTools:
+6. Stand-alone version - to open local or remote files muck quicker
+7. Global `x` variable (`window.x`) is available in DevTools:
     * `doc` - raw XML document object
     * `root` - root XML element object
-    * `$` - jQuery with root element
+    * `$` - jQuery bound on root element
     * `history` - search results
+    * `$q` - helper to jQuery search
+    * `cs` - helper to CSS search
+    * `re` - helper to RegEx search
+    * `tx` - helper to Text search
+    * `xp` - helper to XPath search
+
+    > Above helpers are `(expression, el = root) => []` and searching on root element.
 
 ## Libraries and techs used
 
@@ -23,41 +31,88 @@ Chrome Extension to display XML files built with Vue
 4. `jQuery`
 5. `document.querySelectorAll`
 6. `document.evaluate` for `XPath`
-7. `query-string` for dev
-8. `bestzip` for packaging
+7. `bestzip` for packaging
 
 ## TO-DOs
 
-- [ ] Options page
 - [ ] Add some themes
 - [ ] Able to customize CSS
 - [ ] More optimization
-- [ ] I18n (Do I really need to do it?)
 
 ---
 
 ## Development
 
-### Requirements
+### Dev Mode
 
-1. `node.js`
-2. `yarn`
-
-### Development as regular web app
-
-1. `yarn dev` or `npm run dev`
+1. `yarn web` or `npm run web`
 2. Open `http://localhost:8080/` to start debugging
-3. By default it will render `public/xml/default.xml`
-4. Add query `?xml=<path to another XML file under [public]>` to debug other XML files
+3. Browse or drop local XML file and click Go!
+4. HTTP service running on port 8000 points to `tests` folder with CORS enabled.
 
 ### Test as Chrome Extension
 
-1. `yarn ext` or `npm run ext`
+1. `yarn watch` or `npm run watch`
 2. Drag and drop `dist` folder into Chrome's Extensions page
 
-### Build release version
+### Web Prod Version
 
-`yarn build` or `npm run build`
+`yarn website` or `npm run website`
+
+> Target folder is `public`
+
+### Web with Proxy
+
+ You can also pass `PROXY` env variable to enable proxy. For example,
+
+```bash
+PROXY="https://my.proxy/get?url=" yarn website
+```
+
+When fetching `https://foo.bar/baz.xml`, it will get `https://my.proxy/get?url=https%3A%2F%2Ffoo.bar%2Fbaz.xml` instead. You can implement your own proxy with [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
+
+There is an example for [webtask](https://webtask.io):
+
+```js
+const fetch = require('node-fetch');
+const zlib = require('zlib');
+
+module.exports = async (context, req, res) => {
+  const { url } = context.query;
+  const useCache = !context.query['nocache'];
+  if (!url) {
+    res.writeHead(400, { 'Content-Type': 'text/plain'});
+    res.end('Required query string "url"');
+    return;
+  }
+
+  console.log(url);
+  try {
+    const response = await fetch(url);
+    const { headers } = response;
+    Array.from(headers.keys()).forEach((key) => {
+      if (key === 'content-type') {
+        res.setHeader('Content-Type', headers.get(key));
+      }
+    });
+
+    res.writeHead(response.status, {
+      'access-control-allow-origin': '*',
+      'Content-Encoding': 'deflate',
+      'Cache-Control': useCache ? 'max-age=3600' : 'max-age=0',
+    });
+
+    const buf = await response.buffer();
+    zlib.deflate(buf, function (_, result) {
+      res.end(result);
+    });
+  } catch (e) {
+    console.log(e);
+    res.writeHead(500, { 'Content-Type': 'text/plain'});
+    res.end(e.message);
+  }
+};
+```
 
 ---
 
