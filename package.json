@@ -1,7 +1,12 @@
 {
   "name": "xml-plus",
-  "version": "0.1.0",
-  "private": true,
+  "version": "1.2.1",
+  "homepage": "https://sad-fermi-5b5e4f.netlify.com/",
+  "bugs": "https://github.com/eGust/xml-plus/issues",
+  "repository": "github:eGust/xml-plus",
+  "license" : "MIT",
+  "keywords": ["xml", "chrome-extension", "vue", "vue-cli", "vuejs2"],
+  "author": "eGust<egustc@gmail.com>",
   "scripts": {
     "clean": "rm -rf dist public",
     "build": "vue-cli-service build",

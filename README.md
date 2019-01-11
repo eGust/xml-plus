@@ -39,6 +39,13 @@ Chrome Extension to display XML files built with Vue
 - [ ] Able to customize CSS
 - [ ] More optimization
 
+### Links
+
+* [Github Repo](https://github.com/eGust/xml-plus)
+* [Report Bug](https://github.com/eGust/xml-plus/issues)
+* [Online Demo](https://app.netlify.com/sites/sad-fermi-5b5e4f/overview)
+* [Chrome Extension](https://chrome.google.com/webstore/detail/xml-plus/jmhicemblbmkcbonbhkjmflehkmkiidj)
+
 ---
 
 ## Development
