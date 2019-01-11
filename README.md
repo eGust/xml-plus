@@ -45,7 +45,7 @@ Chrome Extension to display XML files built with Vue
 
 ### Dev Mode
 
-1. `yarn web` or `npm run web`
+1. `yarn dev` or `npm run dev`
 2. Open `http://localhost:8080/` to start debugging
 3. Browse or drop local XML file and click Go!
 4. HTTP service running on port 8000 points to `tests` folder with CORS enabled.
@@ -61,7 +61,9 @@ Chrome Extension to display XML files built with Vue
 
 > Target folder is `public`
 
-### Web with Proxy
+<details><summary>Advanced</summary>
+
+#### Proxy
 
  You can also pass `PROXY` env variable to enable proxy. For example,
 
@@ -113,8 +115,11 @@ module.exports = async (context, req, res) => {
   }
 };
 ```
+</details>
 
 ---
+
+<details><summary>Others</summary>
 
 ## Benchmarks
 
@@ -204,3 +209,5 @@ Chrome v71.0.3578.98 x64
 * Will you provide a standalone version?
 
     > Yes. I have a plan. Maybe later I will make an Electron version.
+
+</details>

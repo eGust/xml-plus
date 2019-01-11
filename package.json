@@ -9,7 +9,6 @@
     "deploy": "vue-cli-service build && cd dist && bestzip ../deploy/xml-plus.zip *",
     "xml": "hs -c-1 --cors tests -p 8000",
     "watch": "vue-cli-service build --mode development --watch",
-    "web-dev": "vue-cli-service serve",
     "web": "run-p web-dev xml",
     "website": "vue-cli-service build"
   },
@@ -29,12 +28,15 @@
     "eslint": "^5.8.0",
     "eslint-plugin-vue": "^5.0.0-0",
     "http-server": "^0.11.1",
+    "node-sass": "^4.11.0",
     "npm-run-all": "^4.1.5",
     "pug": "^2.0.3",
     "pug-plain-loader": "^1.0.0",
+    "sass-loader": "^7.1.0",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "vue-markdown-loader": "^2.4.1",
     "vue-svg-loader": "^0.11.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.21"
   }
 }

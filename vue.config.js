@@ -8,7 +8,7 @@ const CompressionWebpackPlugin = require('compression-webpack-plugin');
 
 const EVENT = env.npm_lifecycle_event;
 const IS_PROD = env.NODE_ENV === 'production';
-const FOR_WEB = EVENT === 'web-dev' || EVENT === 'website';
+const FOR_WEB = EVENT === 'dev' || EVENT === 'website';
 
 const content = {
   entry: 'src/content/index.js',
@@ -70,6 +70,18 @@ module.exports = {
         Object.assign(defs[0], { PROXY: JSON.stringify(env.PROXY || null) });
         return defs;
       });
+
+    config.module.rule('md')
+      .test(/\.md/)
+      .use('vue-loader')
+      .loader('vue-loader')
+      .end()
+      .use('vue-markdown-loader')
+      .loader('vue-markdown-loader/lib/markdown-compiler')
+      .options({
+        raw: true,
+      });
+
     if (FOR_WEB) {
       config
         .plugin('copy')

@@ -2,6 +2,8 @@
   #app(@dragover.stop.prevent @drop.stop.prevent)
     url-box(:current-url="url" :disabled="xmlStatus == 'loading'" @go="onGo")
     xml-main(v-if="xmlStatus == 'ready'" :root-element="rootElement" :levels="levels")
+    #readme(v-else)
+      read-me
 </template>
 
 <script>
@@ -11,6 +13,7 @@ import { mapState, mapActions } from 'vuex';
 import { processXml } from '../ui/store';
 import { UrlBox } from '../ui/components';
 import { XmlMain } from '../ui/connected';
+import ReadMe from '../../README.md';
 
 import buildFetchUrl from './buildFetchUrl';
 import { buildX, readFileText, formatSize } from '../ui/utils';
@@ -18,7 +21,7 @@ import { buildX, readFileText, formatSize } from '../ui/utils';
 export default {
   name: 'app',
 
-  components: { XmlMain, UrlBox },
+  components: { XmlMain, UrlBox, ReadMe },
 
   data: () => ({
     xmlStatus: null,
@@ -112,4 +115,150 @@ body
   color white
   width 100vw
   height 100vh
+
+#readme
+  flex 1
+  overflow auto
+</style>
+
+<style lang="scss">
+#readme > section {
+  padding: 30px 50px;
+  margin: 0px;
+  color:#f0e7d5;
+  font-weight: normal;
+  background: #252525;
+  background-attachment: fixed !important;
+  background: linear_gradient(#2a2a29, #1c1c1c);
+
+  h1, h2, h3, h4, h5, h6 {
+    color:#e8e8e8;
+    margin:0 0 10px;
+    font-weight: normal;
+  }
+
+  p, ul, ol, table, pre, dl {
+    margin:0 0 20px;
+  }
+
+  h1, h2, h3 {
+    line-height:1.1;
+
+  }
+
+  h1 {
+    font-size:28px;
+  }
+
+  h2 {
+    font-size: 24px;
+  }
+
+  h4, h5, h6 {
+    color:#e8e8e8;
+  }
+
+  h3 {
+    font-size: 18px;
+    line-height: 24px;
+    font-weight: normal;
+    color: #b6b6b6;
+  }
+
+  a {
+    color:#ffcc00;
+    font-weight:400;
+    text-decoration:none;
+
+    &:hover {
+      color: #ffeb9b;
+    }
+  }
+
+  a small {
+    font-size:11px;
+    color:#666;
+    margin-top:-0.6em;
+    display:block;
+  }
+
+  strong {
+    font-weight: normal;
+  }
+
+  .wrapper {
+    max-width:650px;
+    margin:0 auto;
+    position:relative;
+    padding: 0 20px;
+  }
+
+  section img {
+    max-width: 100%;
+  }
+
+  blockquote {
+    border-left:3px solid #ffcc00;
+    margin:0;
+    padding:0 0 0 20px;
+    font-style:italic;
+  }
+
+  code {
+    color:#efefef;
+    font-size:13px;
+    margin: 0 4px;
+    padding: 4px 6px;
+    border-radius: 2px;
+  }
+
+  pre {
+    padding:8px 15px;
+    background: #191919;
+    border-radius: 2px;
+    border:1px solid #121212;
+    box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
+    overflow: auto;
+    overflow-y: hidden;
+
+    code {
+      color: #efefef;
+      text-shadow: 0px 1px 0px #000;
+      margin: 0;
+      padding: 0;
+    }
+  }
+
+  table {
+    width:100%;
+    border-collapse:collapse;
+  }
+
+  th {
+    text-align:left;
+    padding:5px 10px;
+    border-bottom:1px solid #434343;
+    color: #b6b6b6;
+    font-weight: normal;
+  }
+
+  td {
+    text-align:left;
+    padding:5px 10px;
+    border-bottom:1px solid #434343;
+  }
+
+  hr {
+    border: 0;
+    outline: none;
+    height: 3px;
+    margin: 0 0 20px;
+  }
+
+  dt {
+    color:#F0E7D5;
+    font-weight: normal;
+  }
+
+}
 </style>
