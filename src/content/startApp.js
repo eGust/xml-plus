@@ -6,11 +6,11 @@ import { processXml, store } from '../ui/store';
 
 Vue.config.productionTip = false;
 
-export default (xmlDoc, url) => {
+export default (xmlDoc) => {
   console.time('init');
   const xml = processXml(xmlDoc);
   Vue.prototype.$xml = xml;
-  store.state.url = url;
+  store.state.url = window.location.href;
 
   window.x = {
     doc: xmlDoc,

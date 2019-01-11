@@ -1,25 +1,19 @@
 <template lang="pug">
   #app
-    main
-      header {{ url }}
-      hr
-      section#xml-root
-        element-tree(:element="rootElement" :path="rootPath" :key="rootPath")
-      footer
-        summary-bar(:levels="levels")
-    aside
-      search-panel
+    header
+      .url {{ url }}
+    hr
+    xml-main(:root-element="rootElement" :levels="levels")
 </template>
 
 <script>
 import { mapState } from 'vuex';
-import { ElementTree, SearchPanel } from '../ui/connected';
-import { SummaryBar } from '../ui/components';
+import { XmlMain } from '../ui/connected';
 
 export default {
   name: 'app',
 
-  components: { ElementTree, SearchPanel, SummaryBar },
+  components: { XmlMain },
 
   mounted() {
     this.$nextTick(() => {
@@ -30,15 +24,10 @@ export default {
   },
 
   computed: {
-    ...mapState(['current', 'url']),
+    ...mapState(['url']),
 
     rootElement() {
       return this.$xml.root;
-    },
-
-    rootPath() {
-      const el = this.rootElement;
-      return el ? el.tagName : 'XML';
     },
 
     levels() {
@@ -55,6 +44,7 @@ body
   margin 0
   padding 0
   font-family Helvetica, Arial, sans-serif
+  background-color #222
   *
     margin 0
     padding 0
@@ -72,30 +62,19 @@ body
 
 #app
   display flex
-  flex-direction row
+  flex-direction column
   position relative
   color white
   width 100vw
   height 100vh
-main
-  flex 5
-  display flex
-  flex-direction column
-  max-width 1100px
-  background-color #222
-  & > *
-    position relative
-  #xml-root
-    flex 1
-    padding 8px 20px
-    overflow-y auto
   header
+    display inline-flex
+    align-items center
+    height 36px
+    background-color #444
+    overflow hidden
     font-size 14pt
-    padding 12px 20px
-  footer
-    height 30px
-aside
-  flex 3
-  min-width 300px
-  position relative
+    font-family Consolas, monospace
+    .url
+      padding-left 15px
 </style>

@@ -10,11 +10,11 @@ function initApp(xml) {
   document.body.innerHTML = body;
   // must replace `document.createElement` so Vue can create Elements with styles
   document.createElement = (tag, opts) => document.createElementNS(NAMESPACE, tag, opts);
-  startApp(xml, window.location.href);
+  startApp(xml);
 }
 
 chrome.runtime.sendMessage({ message: 'QUERY_XML' }, async (xmlType) => {
-  console.log({ xmlType });
+  console.debug({ xmlType });
   if (xmlType !== 'XML') return;
 
   const xmlElement = document.getElementById('webkit-xml-viewer-source-xml');

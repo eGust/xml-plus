@@ -10,33 +10,19 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import { ElementTree, SearchPanel } from '../../ui/connected';
-import { SummaryBar } from '../../ui/components';
+import { SummaryBar } from '../components';
+import ElementTree from './ElementTree';
+import SearchPanel from './SearchPanel';
 
 export default {
   name: 'xml-main',
-
+  props: ['root-element', 'levels'],
   components: { ElementTree, SearchPanel, SummaryBar },
 
   computed: {
-    ...mapState(['xmlKey']),
-
-    xmlData() {
-      return this.$d.xml[this.xmlKey];
-    },
-
-    rootElement() {
-      return this.xmlData.root;
-    },
-
     rootPath() {
       const el = this.rootElement;
       return el ? el.tagName : 'XML';
-    },
-
-    levels() {
-      return this.xmlData.levels;
     },
   },
 };

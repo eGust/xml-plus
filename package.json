@@ -5,16 +5,11 @@
   "scripts": {
     "build": "vue-cli-service build",
     "dev": "vue-cli-service serve",
-    "deploy": "vue-cli-service build && cd extension && bestzip ../deploy/xml-plus.zip *",
-    "dev_ext": "vue-cli-service build --mode development --watch",
-    "xml_server": "hs -c-1 --cors tests",
-    "ext": "run-p dev_ext xml_server",
-    "dev_web": "vue-cli-service build --mode development --watch",
-    "debug_server": "node server/index.js --debug",
-    "server": "node server/index.js",
-    "web": "run-p dev_web debug_server xml_server",
-    "website": "vue-cli-service build",
-    "zip": "cd extension && bestzip ../deploy/xml-plus.zip *"
+    "deploy": "vue-cli-service build && cd dist && bestzip ../deploy/xml-plus.zip *",
+    "xml": "hs -c-1 --cors tests -p 8000",
+    "watch": "vue-cli-service build --mode development --watch",
+    "web": "run-p dev xml",
+    "website": "vue-cli-service build"
   },
   "dependencies": {
     "jquery": "^3.3.1",
@@ -44,6 +39,7 @@
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
     "vue-svg-loader": "^0.11.0",
-    "vue-template-compiler": "^2.5.17"
+    "vue-template-compiler": "^2.5.17",
+    "webpack": "^4.28.4"
   }
 }

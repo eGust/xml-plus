@@ -4,7 +4,7 @@ import App from './App';
 import { store } from '../ui/store';
 
 Vue.config.productionTip = false;
-Vue.prototype.$d = { xml: null };
+Vue.prototype.$xml = null;
 
 new Vue({
   store,

@@ -1,50 +1,41 @@
-const process = require('process');
+const { env } = require('process');
 const { exec } = require('child_process');
 
 // some strange errors when `public` folder not existing
 exec('mkdir public');
 
 const CompressionWebpackPlugin = require('compression-webpack-plugin');
+const { DefinePlugin } = require('webpack');
 
-const event = process.env.npm_lifecycle_event;
-const isNotProd = process.env.NODE_ENV !== 'production';
-
-const options = {
-  entry: 'src/options/index.js',
-  template: 'src/template.html',
-};
+const event = env.npm_lifecycle_event;
+const isProd = env.NODE_ENV === 'production';
 
 const content = {
   entry: 'src/content/index.js',
-  filename: '../tmp/content.html',
-  template: 'src/template.html',
+  template: 'src/content/index.html',
 };
+
+if (isProd) {
+  content.filename = '../tmp/content.html';
+}
 
 const index = {
   entry: 'src/website/index.js',
   template: 'src/website/index.html',
 };
 
+const options = {
+  entry: 'src/website/index.js',
+  template: 'src/website/options.html',
+};
+
 const pages = (() => {
   switch (event) {
-    case 'dev':
-      return { index, options };
-    case 'dev_web':
+    case 'web':
     case 'website':
       return { index };
     default:
       return { content, options };
-  }
-})();
-
-const outputDir = (() => {
-  switch (event) {
-    case 'dev_web':
-    case 'website': {
-      return 'public';
-    }
-    default:
-      return 'extension';
   }
 })();
 
@@ -54,18 +45,21 @@ const plugins = event === 'website' ? [
     algorithm: 'gzip',
     test: new RegExp('\\.(js|css)$'),
   }),
-] : [];
+] : [
+  new DefinePlugin({
+    PROXY: env.PROXY || null,
+  }),
+];
 
 module.exports = {
   filenameHashing: false,
-  outputDir,
   // Use VSCode lint instead of eslint-loader
   // lintOnSave: false,
-  productionSourceMap: isNotProd,
+  productionSourceMap: !isProd,
   pages,
   css: {
     // dev can also hot-reload style changes
-    extract: process.env.npm_lifecycle_event !== 'dev',
+    extract: env.npm_lifecycle_event !== 'dev',
   },
   configureWebpack: {
     output: {
@@ -82,35 +76,7 @@ module.exports = {
       .loader('vue-svg-loader');
 
     switch (event) {
-      case 'dev_ext':
-      case 'build': {
-        config
-          .plugin('copy')
-          .tap((args) => {
-            const [params] = args;
-            params.push({
-              from: 'src/extension',
-              toType: 'dir',
-            });
-            return args;
-          });
-        break;
-      }
-      case 'dev': {
-        config
-          .plugin('copy')
-          .tap((args) => {
-            const [params] = args;
-            params.push({
-              from: 'tests/xml',
-              to: 'xml',
-              toType: 'dir',
-            });
-            return args;
-          });
-        break;
-      }
-      case 'dev_web':
+      case 'web':
       case 'website': {
         config
           .plugin('copy')
@@ -123,10 +89,22 @@ module.exports = {
           ]]);
         break;
       }
-      default:
+      default: {
+        const extension = {
+          from: 'src/extension',
+          toType: 'dir',
+        };
+        const xmlFiles = {
+          from: 'tests/xml',
+          to: 'xml',
+          toType: 'dir',
+        };
         config
           .plugin('copy')
-          .tap(() => []);
+          .tap(() => [
+            isProd || event === 'watch' ? [extension] : [extension, xmlFiles],
+          ]);
+      }
     }
 
     config.optimization.delete('splitChunks');

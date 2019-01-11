@@ -30,5 +30,6 @@ module.exports = {
     document: true,
     chrome: true,
     browser: true,
+    PROXY: true,
   },
 };
