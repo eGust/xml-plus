@@ -109,13 +109,13 @@ module.exports = async (context, req, res) => {
       'Cache-Control': 'max-age=3600',
     });
 
-    const buf = await response.buffer();
-    zlib.deflate(buf, function (_, result) {
-      res.end(result);
+    zlib.deflate(await response.buffer(), (err, buff) => {
+      if (err) throw err;
+      res.end(buff);
     });
-  } catch (e) {
+  } catch (err) {
     res.writeHead(500, { 'Content-Type': 'text/plain' });
-    res.end(e.message);
+    res.end(err.message);
   }
 };
 ```
