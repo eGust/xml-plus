@@ -7,21 +7,38 @@ Chrome Extension to display XML files built with Vue
 1. Supports both `CSS` and `XPath` selectors.
 2. Supports text search and `Regular Expression` search.
 3. Both `querySelectorAll` and `jQuery` flavors of CSS selectors are available.
-4. Optimized for big XML responses. I could not find a way to speed up loading local XML files.
-5. `RegEx` is the only one **case-insensitive**
-6. Stand-alone version - to open local or remote files muck quicker
-7. Global `x` variable (`window.x`) is available in DevTools:
+4. `RegEx` is the only **CASE-INSENSITIVE** one.
+5. Highly optimized for large XML files ( > 1MB ).
+6. Stand-alone version - extremely fast because of avoiding Chrome's slow loading process.
+7. Global `x` variable (`window.x`) is available in DevTools which includes:
     * `doc` - raw XML document object
     * `root` - root XML element object
     * `$` - jQuery bound on root element
     * `history` - search results
-    * `$q` - helper to jQuery search
-    * `cs` - helper to CSS search
-    * `re` - helper to RegEx search
-    * `tx` - helper to Text search
-    * `xp` - helper to XPath search
+    * `$q` - helper for jQuery search
+    * `cs` - helper for CSS search
+    * `re` - helper for RegEx search
+    * `tx` - helper for Text search
+    * `xp` - helper for XPath search
 
-    > Above helpers are `(expression, el = root) => []` and searching on root element.
+    > Above helpers are `(expression, baseElement = root) => []` and searching on `baseElement` which is `x.root` by default.
+
+### Links
+
+* [Github Repo](https://github.com/eGust/xml-plus)
+* [Report Bug](https://github.com/eGust/xml-plus/issues)
+* [Chrome Extension](https://chrome.google.com/webstore/detail/xml-plus/jmhicemblbmkcbonbhkjmflehkmkiidj)
+* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/) - Remote links are very **UNLIKELY** working due to [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy). Local files should be fine.
+
+## TO-DOs
+
+* [ ] Add some themes
+* [ ] Able to customize CSS
+* [ ] More optimization
+
+---
+
+## Development
 
 ## Libraries and techs used
 
@@ -32,23 +49,6 @@ Chrome Extension to display XML files built with Vue
 5. `document.querySelectorAll`
 6. `document.evaluate` for `XPath`
 7. `bestzip` for packaging
-
-## TO-DOs
-
-- [ ] Add some themes
-- [ ] Able to customize CSS
-- [ ] More optimization
-
-### Links
-
-* [Github Repo](https://github.com/eGust/xml-plus)
-* [Report Bug](https://github.com/eGust/xml-plus/issues)
-* [Chrome Extension](https://chrome.google.com/webstore/detail/xml-plus/jmhicemblbmkcbonbhkjmflehkmkiidj)
-* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/) - Remote links are very **UNLIKELY** working due to [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy). Local files should be fine.
-
----
-
-## Development
 
 ### Dev Mode
 
@@ -83,19 +83,17 @@ When fetching `https://foo.bar/baz.xml`, it will get `https://my.proxy/get?url=h
 There is an example for [webtask](https://webtask.io):
 
 ```js
-const fetch = require('node-fetch');
 const zlib = require('zlib');
+const fetch = require('node-fetch'); // 3rd-party
 
 module.exports = async (context, req, res) => {
   const { url } = context.query;
-  const useCache = !context.query['nocache'];
   if (!url) {
     res.writeHead(400, { 'Content-Type': 'text/plain'});
     res.end('Required query string "url"');
     return;
   }
 
-  console.log(url);
   try {
     const response = await fetch(url);
     const { headers } = response;
@@ -106,9 +104,9 @@ module.exports = async (context, req, res) => {
     });
 
     res.writeHead(response.status, {
-      'access-control-allow-origin': '*',
+      'Access-Control-Allow-Origin': '*', // IMPORTANT: enables CORS. You can restrict it to your own domain names.
       'Content-Encoding': 'deflate',
-      'Cache-Control': useCache ? 'max-age=3600' : 'max-age=0',
+      'Cache-Control': 'max-age=3600',
     });
 
     const buf = await response.buffer();
@@ -116,12 +114,12 @@ module.exports = async (context, req, res) => {
       res.end(result);
     });
   } catch (e) {
-    console.log(e);
-    res.writeHead(500, { 'Content-Type': 'text/plain'});
+    res.writeHead(500, { 'Content-Type': 'text/plain' });
     res.end(e.message);
   }
 };
 ```
+
 </details>
 
 ---
@@ -192,29 +190,11 @@ module.exports = async (context, req, res) => {
 
 ### Environment
 
-```
+```text
 Windows 10 1803 x64
 Intel i7-6700K
 32G RAM
 Chrome v71.0.3578.98 x64
 ```
-
-## FAQ
-
-* Have you tried even bigger file?
-
-    > Yes I did. I loaded a 38.7MiB XML (Total 824347 nodes; Max Depth: 4). It took 45s to get `DOMContentLoaded` and spent another ~30s to get the result.
-
-* Can XML Plus be even faster?
-
-    > Yes. I am planning to avoid going through all nodes at the beginning when the document is ready. Move it to a background worker so it should immediately get a meaningful result after `DOMContentLoaded`.
-
-* Can you improve the speed of loading local XML files?
-
-    > Probably I can't. I tried really hard but seems like Chrome will always do a stupid loading.
-
-* Will you provide a standalone version?
-
-    > Yes. I have a plan. Maybe later I will make an Electron version.
 
 </details>
