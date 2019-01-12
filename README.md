@@ -43,8 +43,8 @@ Chrome Extension to display XML files built with Vue
 
 * [Github Repo](https://github.com/eGust/xml-plus)
 * [Report Bug](https://github.com/eGust/xml-plus/issues)
-* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/)
 * [Chrome Extension](https://chrome.google.com/webstore/detail/xml-plus/jmhicemblbmkcbonbhkjmflehkmkiidj)
+* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/) - Remote links are very **UNLIKELY** working due to [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy). Local files should be fine.
 
 ---
 
