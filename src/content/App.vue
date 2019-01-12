@@ -8,7 +8,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { XmlMain } from '../ui/connected';
+import { XmlMain } from '../ui/containers';
 
 export default {
   name: 'app',

@@ -11,7 +11,7 @@ import Vue from 'vue';
 import { mapState, mapActions } from 'vuex';
 
 import { UrlBox } from '../ui/components';
-import { XmlMain } from '../ui/connected';
+import { XmlMain } from '../ui/containers';
 import ReadMe from '../../README.md';
 
 import buildFetchUrl from './buildFetchUrl';
