@@ -25,10 +25,10 @@ Chrome Extension to display XML files built with Vue
 
 ### Links
 
+* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/) - Remote links are very **UNLIKELY** working due to [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy). Local files should be fine.
 * [Github Repo](https://github.com/eGust/xml-plus)
 * [Report Bug](https://github.com/eGust/xml-plus/issues)
 * [Chrome Extension](https://chrome.google.com/webstore/detail/xml-plus/jmhicemblbmkcbonbhkjmflehkmkiidj)
-* [Online Demo](https://sad-fermi-5b5e4f.netlify.com/) - Remote links are very **UNLIKELY** working due to [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy). Local files should be fine.
 
 ## TO-DOs
 
@@ -62,7 +62,7 @@ Chrome Extension to display XML files built with Vue
 1. `yarn watch` or `npm run watch`
 2. Drag and drop `dist` folder into Chrome's Extensions page
 
-### Web Prod Version
+### Build Static Website
 
 `yarn website` or `npm run website`
 
@@ -78,7 +78,7 @@ Chrome Extension to display XML files built with Vue
 PROXY="https://my.proxy/get?url=" yarn website
 ```
 
-When fetching `https://foo.bar/baz.xml`, it will get `https://my.proxy/get?url=https%3A%2F%2Ffoo.bar%2Fbaz.xml` instead. You can implement your own proxy with [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS).
+When fetching `https://foo.bar/baz.xml`, it will get `https://my.proxy/get?url=https%3A%2F%2Ffoo.bar%2Fbaz.xml` instead. You can implement your own proxy with [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS).
 
 There is an example for [webtask](https://webtask.io):
 
@@ -90,7 +90,7 @@ module.exports = async (context, req, res) => {
   const { url } = context.query;
   if (!url) {
     res.writeHead(400, { 'Content-Type': 'text/plain'});
-    res.end('Required query string "url"');
+    res.end('Required query string `url`');
     return;
   }
 
@@ -121,6 +121,12 @@ module.exports = async (context, req, res) => {
 ```
 
 </details>
+
+### Chrome Extension
+
+* `yarn watch` or `npm run watch` to build dev in `dist` folder
+* `yarn build` or `npm run build` to build prod version
+* `yarn deploy` or `npm run deploy` will build and get `deploy/xml-plus.zip` ready for Chrome store
 
 ---
 

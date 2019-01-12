@@ -124,13 +124,18 @@ body
 
 <style lang="scss">
 #readme > section {
-  padding: 30px 50px;
+  padding: 30px;
   margin: 0px;
   color:#f0e7d5;
   font-weight: normal;
   background: #252525;
   background-attachment: fixed !important;
-  background: linear_gradient(#2a2a29, #1c1c1c);
+  background: #222;
+
+  * {
+    font-size: 12pt;
+    line-height: 24px;
+  }
 
   h1, h2, h3, h4, h5, h6 {
     color:#e8e8e8;
@@ -142,9 +147,12 @@ body
     margin:0 0 20px;
   }
 
-  h1, h2, h3 {
-    line-height:1.1;
+  ul, ol {
+    padding-left: 30px;
+  }
 
+  h1, h2, h3 {
+    line-height: 1.2;
   }
 
   h1 {
@@ -161,7 +169,7 @@ body
 
   h3 {
     font-size: 18px;
-    line-height: 24px;
+    line-height: 28px;
     font-weight: normal;
     color: #b6b6b6;
   }
@@ -206,8 +214,8 @@ body
   }
 
   code {
-    color:#efefef;
-    font-size:13px;
+    color: greenyellow;
+    background-color: #111;
     margin: 0 4px;
     padding: 4px 6px;
     border-radius: 2px;
@@ -215,7 +223,7 @@ body
 
   pre {
     padding:8px 15px;
-    background: #191919;
+    background-color: #111;
     border-radius: 2px;
     border:1px solid #121212;
     box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
