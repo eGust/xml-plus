@@ -127,14 +127,14 @@ body
   padding: 30px;
   margin: 0px;
   color:#f0e7d5;
-  font-weight: normal;
   background: #252525;
   background-attachment: fixed !important;
   background: #222;
 
   * {
-    font-size: 12pt;
-    line-height: 24px;
+    font-family: Segoe UI,Helvetica,Arial,sans-serif,Segoe UI Emoji,Segoe UI Symbol;
+    font-size: 16px;
+    line-height: 1.5;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -192,7 +192,7 @@ body
   }
 
   strong {
-    font-weight: normal;
+    font-weight: bold;
   }
 
   .wrapper {
