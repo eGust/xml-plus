@@ -1,14 +1,14 @@
 import Vue from 'vue';
 
 import App from './App';
-import { processXml, store } from '../ui/store';
-import { buildX } from '../ui/utils';
+import store from '../ui/store';
+import { buildX, parseXml } from '../ui/utils';
 
 Vue.config.productionTip = false;
 
 export default (xmlDoc) => {
   console.time('init');
-  const xml = processXml(xmlDoc);
+  const xml = parseXml(xmlDoc);
   Vue.prototype.$xml = xml;
   store.state.url = window.location.href;
 

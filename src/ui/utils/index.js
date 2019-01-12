@@ -9,6 +9,7 @@ import regExpr from './regExpr';
 
 export { default as formatSize } from './formatSize';
 export { default as readFileText } from './readFileText';
+export { default as parseXml } from './parseXml';
 
 const searchCalls = {
   Text: text,

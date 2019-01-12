@@ -14,7 +14,7 @@
     "deploy": "vue-cli-service build && cd dist && bestzip ../deploy/xml-plus.zip *",
     "xml": "hs -c-1 --cors tests -p 8000",
     "watch": "vue-cli-service build --mode development --watch",
-    "web": "run-p web-dev xml",
+    "web": "run-p dev xml",
     "website": "vue-cli-service build"
   },
   "dependencies": {
