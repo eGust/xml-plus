@@ -214,6 +214,7 @@ body
   }
 
   code {
+    font-family: monospace;
     color: greenyellow;
     background-color: #111;
     margin: 0 4px;
@@ -229,6 +230,7 @@ body
     box-shadow: inset 0 1px 3px rgba(0,0,0,.3);
     overflow: auto;
     overflow-y: hidden;
+    font-family: monospace;
 
     code {
       color: #efefef;
