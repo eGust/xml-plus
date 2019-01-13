@@ -232,6 +232,10 @@ body
     overflow-y: hidden;
     font-family: monospace;
 
+    * {
+      font-family: monospace;
+    }
+
     code {
       color: #efefef;
       text-shadow: 0px 1px 0px #000;
