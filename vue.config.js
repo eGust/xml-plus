@@ -1,3 +1,4 @@
+const { join } = require('path');
 const { env } = require('process');
 const { exec } = require('child_process');
 
@@ -16,7 +17,7 @@ const content = {
 };
 
 if (IS_PROD) {
-  content.filename = '../tmp/content.html';
+  content.filename = join(__dirname, 'tmp/content.html');
 }
 
 const index = {
@@ -56,6 +57,15 @@ module.exports = {
       chunkFilename: 'js/[name].js',
     },
     plugins,
+  },
+  devServer: {
+    contentBase: [
+      join(__dirname, FOR_WEB ? 'public' : 'dist'),
+      join(__dirname, 'tests'),
+    ],
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+    },
   },
   chainWebpack: (config) => {
     const svgRule = config.module.rule('svg');
