@@ -117,6 +117,10 @@ body
   width 100vw
   height 100vh
 
+#cc-helper
+  position absolute
+  visibility hidden
+
 #readme
   flex 1
   overflow auto

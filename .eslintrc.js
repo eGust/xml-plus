@@ -17,10 +17,10 @@ module.exports = {
       'error',
       'always',
       {
-        'js': 'never',
-        'vue': 'never',
+        js: 'never',
+        vue: 'never',
       },
-    ]
+    ],
   },
   parserOptions: {
     parser: 'babel-eslint',

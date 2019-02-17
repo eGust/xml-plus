@@ -59,6 +59,7 @@ export const searchSelector = (args, resolver) => startSearch({
 export const buildX = (xmlDoc, { root }) => ({
   doc: xmlDoc,
   root,
+  cur: root,
   $: $(root),
   $q: (expr, el = root) => jQuery(el, expr),
   cs: (expr, el = root) => css(el, expr),

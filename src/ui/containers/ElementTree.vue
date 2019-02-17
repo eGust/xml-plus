@@ -8,6 +8,7 @@
     :path="path"
     @toggle="onToggle"
     @select="onSelect"
+    @copy="onCopy"
     @hover-start="onHoverStart"
     @hover-end="onHoverEnd"
   )
@@ -122,6 +123,15 @@ const ElementTree = {
           path: this.status.selected ? null : this.path,
         },
       });
+    },
+
+    onCopy() {
+      const el = document.createElement('textarea');
+      el.value = this.element.outerHTML;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand('copy');
+      document.body.removeChild(el);
     },
 
     onHoverStart() {

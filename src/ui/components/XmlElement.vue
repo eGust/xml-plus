@@ -27,9 +27,13 @@
         | >
 
     template(v-else-if="status.open")
+      .copy-button(@click="onCopy")
+        copy-icon.copy-icon
       .info.dark(v-if="hasChild")
         |  - {{ childCount }} children, {{ status.leafCount }} leafs
     template(v-else-if="!isSelfClosed")
+      .copy-button(@click="onCopy")
+        copy-icon.copy-icon
       .info.light-dark.elements(v-if="hasChild")
         |  [{{ childCount }} children, {{ status.leafCount }} leafs...]&nbsp;
       .info.shorten-text(v-else :title="text")
@@ -53,6 +57,8 @@
 </template>
 
 <script>
+import CopyIcon from '../../assets/copy-document.svg';
+
 const isInlineable = text => text.length <= 20 && !text.includes('\n');
 
 const XmlElement = {
@@ -133,6 +139,9 @@ const XmlElement = {
     onSelected() {
       this.$emit('select');
     },
+    onCopy() {
+      this.$emit('copy');
+    },
     onMouseOver(e) {
       if (this.hovering) {
         e.stopImmediatePropagation();
@@ -150,7 +159,7 @@ const XmlElement = {
   },
 };
 
-XmlElement.components = { XmlElement };
+XmlElement.components = { XmlElement, CopyIcon };
 export default XmlElement;
 </script>
 
@@ -168,10 +177,12 @@ export default XmlElement;
 
 .attribute
   display inline
-.open, .close, .tag
+.open, .close
   display inline
   *
     display inline
+.tag > *
+  display inline-block
 .toggle
   cursor pointer
 .attribute
@@ -181,8 +192,8 @@ export default XmlElement;
   .value
     color sandybrown
 .info
-  display inline
-  user-select: none;
+  display inline-block
+  user-select: none
 
 .dark
   color gray
@@ -232,8 +243,23 @@ export default XmlElement;
   color seagreen
   .tag-name
     color lime
+.copy-button
+  display none
+  cursor pointer
+  margin-left 5px
+  .copy-icon
+    width 19px
+    height 19px
+    padding 3px
+    vertical-align middle
+    border 0.6px dotted lightskyblue
+    border-radius 3px
+  &:hover .copy-icon
+    border-style solid
 
 .xml-element
+  &:hover > .copy-button
+    display inline-block
   & > .guide-line
     position absolute
     top 1.2em

@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "XML Plus",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "A powerful XML Viewer, supports text/regex and jQuery/CSS, XPath selectors",
   "author": "eGust",
   "homepage_url": "https://github.com/eGust/xml-plus",

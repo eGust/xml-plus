@@ -13,6 +13,7 @@ Chrome Extension to display XML files built with Vue
 7. Global `x` variable (`window.x`) is available in DevTools which includes:
     * `doc` - raw XML document object
     * `root` - root XML element object
+    * `cur` - current selected node
     * `$` - jQuery bound on root element
     * `history` - search results
     * `$q` - helper for jQuery search

@@ -59,6 +59,12 @@ const store = new Vuex.Store({
         statuses[path][subject] = true;
       }
       current[subject] = path;
+
+      if (subject === 'selected') {
+        const { x } = window;
+        const { root } = x;
+        x.cur = path ? path.slice(2).split('/').reduce((n, i) => n.children[i], root) : root;
+      }
     },
 
     updateSubject: (state, { subject, data }) => {
